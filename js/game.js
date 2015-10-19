@@ -12,6 +12,7 @@ function Game(canvasID) {
         last: Date.now(),
     };
     this.secret = "Are you really going to do this? u bstrd!";
+    this.version = "0.0.0.1";
 }
 
 Game.prototype.load = function () {
@@ -121,6 +122,11 @@ Game.prototype.draw = function () {
         this.ctx.fillStyle="red";
         var border = 2;
         this.ctx.fillRect(x0+border,y0+border,(w-border*2)*this.loaded, h-border*2);
+        this.ctx.font = "20px GameFont";
+        this.ctx.fillStyle = "black";
+        this.ctx.textAlign = "right";
+        this.ctx.textBaseLine = "bottom";
+        this.ctx.fillText(this.version,this.width-10,this.height-10)
     } else if (this.scene == "town") {
         this.ctx.fillStyle="red";
         this.ctx.fillRect(0,0,this.width, this.height);
