@@ -140,9 +140,14 @@ Game.prototype.updateTime = function (timestamp) {
             this.loaded = done/count; 
         }
     } else {
-        if (this.last!=null) {
-            var delta = timestamp - this.last
+        if (data.last<timestamp) {
+            this.advanceTo(timestamp)
         }
-        this.last = timestamp;
     }
+}
+
+Game.prototype.advanceTo = function (timestamp) {
+    data.last = timestamp;
+    var encrypted = CryptoJS.AES.encrypt(JSON.stringify(this.data), this.secret).toString();
+    localStorage.setItem("data",encrypted);
 }
