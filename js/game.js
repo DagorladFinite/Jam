@@ -8,9 +8,23 @@ function Game(canvasID) {
     this.imageList = [];
     this.img = {};
     this.loaded = 0;
+    this.data = {
+        last: Date.now(),
+    };
+    this.secret = "Are you really going to do this? u bstrd!";
+}
+
+Game.prototype.load = function () {
+    if (true || !localStorage.getItem("data")) {
+        var encrypted = CryptoJS.AES.encrypt(JSON.stringify(this.data), this.secret).toString();
+        localStorage.setItem("data",encrypted);
+    } else {
+        this.data = JSON.parse(CryptoJS.AES.decrypt(localStorage.getItem("data"), this.secret).toString(CryptoJS.enc.Utf8));
+    }
 }
 
 Game.prototype.init = function () {
+    this.load();
     window.onkeydown = this.keydown.bind(this);
     document.getElementById(this.canvasID).onmousedown = this.mousedown.bind(this);
     document.getElementById(this.canvasID).onmousemove = this.mousemove.bind(this);
