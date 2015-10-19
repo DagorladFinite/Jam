@@ -13,6 +13,69 @@ function Game(canvasID) {
     };
     this.secret = "Are you really going to do this? u bstrd!";
     this.version = "0.0.0.1";
+    this.menu = [
+        {
+            x: this.width*0.0,
+            y: this.height*0.0,
+            w: this.width*0.1,
+            h: this.height*0.1,
+            img: "gfx/town.jpeg",
+            onclick: function () {
+
+            }
+        },
+        {
+            x: this.width*0.1,
+            y: this.height*0.0,
+            w: this.width*0.1,
+            h: this.height*0.1,
+            img: "gfx/minigame.jpg",
+            onclick: function () {
+                
+            }
+        },
+        {
+            x: this.width*0.2,
+            y: this.height*0.0,
+            w: this.width*0.1,
+            h: this.height*0.1,
+            img: "gfx/upgrade.gif",
+            onclick: function () {
+                
+            }
+        },
+        {
+            x: this.width*0.7,
+            y: this.height*0.0,
+            w: this.width*0.1,
+            h: this.height*0.1,
+            img: "gfx/achievement.png",
+            onclick: function () {
+                
+            }
+        },
+        {
+            x: this.width*0.8,
+            y: this.height*0.0,
+            w: this.width*0.1,
+            h: this.height*0.1,
+            img: "gfx/credits.gif",
+            onclick: function () {
+                
+            }
+        },
+        {
+            x: this.width*0.9,
+            y: this.height*0.0,
+            w: this.width*0.1,
+            h: this.height*0.1,
+            img: "gfx/options.png",
+            onclick: function () {
+                
+            }
+        },
+    ];
+    for (var i=0; i<this.menu.length; ++i) this.imageList.push(this.menu[i].img);
 }
 
 Game.prototype.load = function () {
@@ -37,7 +100,11 @@ Game.prototype.init = function () {
         if (!this.img.hasOwnProperty(this.imageList[i])) {
             this.img[this.imageList[i]]={
                 img: new Image(),
+                completed: false,
             }
+            this.img[this.imageList[i]].img.onload = function (img) {
+                img.completed = true;
+            }.bind(null,this.img[this.imageList[i]])
             this.img[this.imageList[i]].img.src = this.imageList[i];
         }
     }
@@ -130,9 +197,17 @@ Game.prototype.draw = function () {
     } else if (this.scene == "town") {
         this.ctx.fillStyle="red";
         this.ctx.fillRect(0,0,this.width, this.height);
+        this.drawHeader();
     }
 }
 
+Game.prototype.drawHeader = function () {
+    this.ctx.fillStyle="black";
+    this.ctx.fillRect(this.width*0.3,this.height*0.0,this.width*0.4,this.height*0.1);
+    for (var i=0; i<this.menu.length; ++i) {
+        this.ctx.drawImage(this.img[this.menu[i].img].img,this.menu[i].x,this.menu[i].y,this.menu[i].w,this.menu[i].h);
+    }
+}
 Game.prototype.update = function (timestamp) {
     this.updateTime(timestamp);
     this.draw();
@@ -143,7 +218,7 @@ Game.prototype.updateTime = function (timestamp) {
     if (this.scene=="loading") {
         var done=0;
         for (var key in this.img) {
-            if (this.img.hasOwnProperty(key) && this.img[key].img.completed) ++done; 
+            if (this.img.hasOwnProperty(key) && this.img[key].completed) ++done; 
         }
         var count = Object.keys(this.img).length;
         if (count==0) {
