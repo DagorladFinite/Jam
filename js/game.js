@@ -30,27 +30,67 @@ Game.prototype.init = function () {
 }
 
 Game.prototype.keydown = function (e) {
-    console.log(e,this);
-}
-Game.prototype.mousedown = function (e) {
-    console.log(e,this);
-}
-Game.prototype.mousemove = function (e) {
-    console.log(e,this);
-}
-Game.prototype.mouseup = function (e) {
-    console.log(e,this);
-}
-Game.prototype.touchdown = function (e) {
-    console.log(e,this);
-}
-Game.prototype.touchmove = function (e) {
-    console.log(e,this);
-}
-Game.prototype.touchup = function (e) {
-    console.log(e,this);
+    this.key(e.keyCode);
 }
 
+Game.prototype.mousedown = function (e) {
+    var parentPosition = getPosition(e.currentTarget);
+    var x = e.clientX - parentPosition.x;
+    var y = e.clientY - parentPosition.y;
+    this.press(x,y,0);
+}
+Game.prototype.mousemove = function (e) {
+    var parentPosition = getPosition(e.currentTarget);
+    var x = e.clientX - parentPosition.x;
+    var y = e.clientY - parentPosition.y;
+    this.move(x,y,0);
+}
+Game.prototype.mouseup = function (e) {
+    var parentPosition = getPosition(e.currentTarget);
+    var x = e.clientX - parentPosition.x;
+    var y = e.clientY - parentPosition.y;
+    this.release(x,y,0);
+}
+Game.prototype.touchdown = function (e) {
+    var obj=event.changedTouches||event.originalEvent.changedTouches;
+    for (var i=0; i<obj.length; ++i) {
+        var x = obj[i].pageX-obj[i].target.offsetLeft;
+        var y = obj[i].pageY-obj[i].target.offsetTop;
+        var id= i;
+        this.press(x,y,id);
+    }
+}
+Game.prototype.touchmove = function (e) {
+    var obj=event.changedTouches||event.originalEvent.changedTouches;
+    for (var i=0; i<obj.length; ++i) {
+        var x = obj[i].pageX-obj[i].target.offsetLeft;
+        var y = obj[i].pageY-obj[i].target.offsetTop;
+        var id=i;
+        this.move(x,y,id);
+    }
+}
+Game.prototype.touchup = function (e) {
+    var obj=event.changedTouches||event.originalEvent.changedTouches;
+    for (var i=0; i<obj.length; ++i) {
+        var x = obj[i].pageX-obj[i].target.offsetLeft;
+        var y = obj[i].pageY-obj[i].target.offsetTop;
+        var id= i;
+        this.release(x,y,id);
+    }
+}
+
+Game.prototype.key = function (key) {
+    console.log("Pressed: "+key);
+}
+Game.prototype.press = function (x,y,id) {
+    console.log("M begin",x,y,id);
+}
+Game.prototype.move = function (x,y,id) {
+    //console.log("M move",x,y,id);
+}
+Game.prototype.release = function (x,y,id) {
+    console.log("M end",x,y,id);
+}
 Game.prototype.draw = function () {
     if (this.scene == "loading") {
         this.ctx.fillStyle="white";
