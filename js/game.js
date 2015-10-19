@@ -10,8 +10,17 @@ function Game(canvasID) {
     this.loaded = 0;
     this.data = {
         last: Date.now(),
+        blood: 0,
     };
     this.secret = "Are you really going to do this? u bstrd!";
+    this.units = [
+        "Gallon",
+        "Goats",
+        "Humans",
+        "Elephants",
+        "Whales",
+        "Your Mom",
+    ];
     this.version = "0.0.0.1";
     this.menu = [
         {
@@ -201,9 +210,27 @@ Game.prototype.draw = function () {
     }
 }
 
+Game.prototype.bloodToText = function () {
+    var exp = 0;
+    if (this.data.blood>0) {
+        exp = Math.floor(getBaseLog(1000,this.data.blood));
+    }
+    if (exp==0) {
+        return this.data.blood.toString()+" "+this.units[exp];
+    } else {
+        console.log(this.data.blood,Math.pow(1000,exp))
+        return (this.data.blood/Math.pow(1000,exp)).toFixed(1).toString()+" "+this.units[Math.floor(exp)];
+    }
+}
+
 Game.prototype.drawHeader = function () {
     this.ctx.fillStyle="black";
     this.ctx.fillRect(this.width*0.3,this.height*0.0,this.width*0.4,this.height*0.1);
+    this.ctx.font = "20px GameFont";
+    this.ctx.fillStyle = "red";
+    this.ctx.textAlign = "center";
+    this.ctx.textBaseLine = "middle";
+    this.ctx.fillText(this.bloodToText(),this.width/2,this.height*0.065);
     for (var i=0; i<this.menu.length; ++i) {
         this.ctx.drawImage(this.img[this.menu[i].img].img,this.menu[i].x,this.menu[i].y,this.menu[i].w,this.menu[i].h);
     }
@@ -227,8 +254,9 @@ Game.prototype.updateTime = function (timestamp) {
             this.loaded = done/count; 
         }
     } else {
-        if (this.data.last<timestamp) {
-            this.advanceTo(timestamp)
+        var now = Date.now();
+        if (this.data.last<now) {
+            this.advanceTo(now);
         }
     }
 }
@@ -236,6 +264,7 @@ Game.prototype.updateTime = function (timestamp) {
 Game.prototype.advanceTo = function (timestamp) {
     var delta = timestamp - this.data.last;
     this.data.last = timestamp;
+    this.data.blood += Math.ceil(delta);
     var encrypted = CryptoJS.AES.encrypt(JSON.stringify(this.data), this.secret).toString();
     localStorage.setItem("data",encrypted);
 }

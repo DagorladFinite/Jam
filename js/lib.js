@@ -9,3 +9,7 @@ function getPosition(element) {
     }
     return { x: xPosition, y: yPosition };
 }
+
+function getBaseLog(x, y) {
+  return Math.log(y) / Math.log(x);
+}
