@@ -104,6 +104,9 @@ Game.prototype.move = function (x,y,id) {
 }
 Game.prototype.release = function (x,y,id) {
     console.log("M end",x,y,id);
+    if (this.scene=="loading" && this.loaded==1) {
+        this.scene = "town";
+    }
 }
 Game.prototype.draw = function () {
     if (this.scene == "loading") {
@@ -118,6 +121,9 @@ Game.prototype.draw = function () {
         this.ctx.fillStyle="red";
         var border = 2;
         this.ctx.fillRect(x0+border,y0+border,(w-border*2)*this.loaded, h-border*2);
+    } else if (this.scene == "town") {
+        this.ctx.fillStyle="red";
+        this.ctx.fillRect(0,0,this.width, this.height);
     }
 }
 
@@ -140,14 +146,15 @@ Game.prototype.updateTime = function (timestamp) {
             this.loaded = done/count; 
         }
     } else {
-        if (data.last<timestamp) {
+        if (this.data.last<timestamp) {
             this.advanceTo(timestamp)
         }
     }
 }
 
 Game.prototype.advanceTo = function (timestamp) {
-    data.last = timestamp;
+    var delta = timestamp - this.data.last;
+    this.data.last = timestamp;
     var encrypted = CryptoJS.AES.encrypt(JSON.stringify(this.data), this.secret).toString();
     localStorage.setItem("data",encrypted);
 }
