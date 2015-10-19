@@ -11,6 +11,13 @@ function Game(canvasID) {
 }
 
 Game.prototype.init = function () {
+    window.onkeydown = this.keydown.bind(this);
+    document.getElementById(this.canvasID).onmousedown = this.mousedown.bind(this);
+    document.getElementById(this.canvasID).onmousemove = this.mousemove.bind(this);
+    document.getElementById(this.canvasID).onmouseup = this.mouseup.bind(this);
+    document.getElementById(this.canvasID).addEventListener("touchstart", this.touchdown.bind(this), false);
+    document.getElementById(this.canvasID).addEventListener("touchmove", this.touchmove.bind(this), false);
+    document.getElementById(this.canvasID).addEventListener("touchend", this.touchup.bind(this), false);
     for (var i=0; i<this.imageList.length; ++i) {
         if (!this.img.hasOwnProperty(this.imageList[i])) {
             this.img[this.imageList[i]]={
@@ -20,6 +27,28 @@ Game.prototype.init = function () {
         }
     }
     window.requestAnimationFrame(this.update.bind(this));
+}
+
+Game.prototype.keydown = function (e) {
+    console.log(e,this);
+}
+Game.prototype.mousedown = function (e) {
+    console.log(e,this);
+}
+Game.prototype.mousemove = function (e) {
+    console.log(e,this);
+}
+Game.prototype.mouseup = function (e) {
+    console.log(e,this);
+}
+Game.prototype.touchdown = function (e) {
+    console.log(e,this);
+}
+Game.prototype.touchmove = function (e) {
+    console.log(e,this);
+}
+Game.prototype.touchup = function (e) {
+    console.log(e,this);
 }
 
 Game.prototype.draw = function () {
