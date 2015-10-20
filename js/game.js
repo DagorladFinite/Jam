@@ -34,6 +34,72 @@ function Game(canvasID) {
         },
         humanSpawn: 0,
     };
+    this.upgrades = {
+        maxHumans: {
+            title: "Superpopulation",
+            base: 10,
+            exp: 1.1,
+            ord: 0,
+            eval: this.getMaxHumans.bind(this),
+            unit: "Humans",
+        },
+        humanSpawnTime: {
+            title: "",
+            base: 10,
+            exp: 1.1,
+            ord: 1,
+            eval: this.getHumanSpawnTime.bind(this),
+            unit: "ms",
+        },
+        autokill: {
+            title: "",
+            base: 10,
+            exp: 1.1,
+            ord: 2,
+            eval: this.getMaxHumans.bind(this),
+            unit: "Kills/s",
+        },
+        particlesPerHuman: {
+            title: "Polycythemia",
+            base: 10,
+            exp: 1.1,
+            ord: 3,
+            eval: this.getParticlesPerHuman.bind(this),
+            unit: "Droplets",
+        },
+        bloodPerParticle: {
+            title: "Leukocytosis",
+            base: 10,
+            exp: 1.1,
+            ord: 4,
+            eval: this.getBloodPerParticle.bind(this),
+            unit: "Blood",
+        },
+        critical: {
+            title: "",
+            base: 10,
+            exp: 1.1,
+            ord: 5,
+            eval: this.getCritical.bind(this),
+            unit: "%",
+        },
+        sickness: {
+            title: "",
+            base: 10,
+            exp: 1.1,
+            ord: 6,
+            eval: this.getMaxHumans.bind(this),
+            unit: "Kills/s",
+        },
+        humanFarm: {
+            title: "",
+            base: 10,
+            exp: 1.1,
+            ord: 7,
+            eval: this.getMaxHumans.bind(this),
+            unit: "Blood",
+        },
+    };
     this.humans = [];
     this.secret = "Are you really going to do this? u bstrd!";
     this.units = [
@@ -316,7 +382,31 @@ Game.prototype.drawOverlay = function () {
         this.ctx.fillStyle="rgba(127,127,127,0.5)"
         this.ctx.fillRect(0,60,this.width,this.height-60);
         this.ctx.drawImage(this.img["gfx/menubg.png"].img,50,100,this.width-100,this.height-140);
+        if (this.overlay=="upgrade") {
+            var w=3;
+            var h=3;
+            for (var key in this.upgrades) {
+                if (this.upgrades.hasOwnProperty(key)) {
+                    var x=this.upgrades[key].ord%w;
+                    var y=Math.floor(this.upgrades[key].ord/h);
+                    this.ctx.fillStyle="black";
+                    this.ctx.fillRect(50+250*x,200+100*y,200,75);
+                    this.ctx.fillStyle="red";
+                    this.ctx.font = "16px GameFont";
+                    this.ctx.textAlign = "center";
+                    this.ctx.textBaseLine = "bottom";
+                    this.ctx.fillText(this.upgrades[key].title,150+250*x,220+100*y)
+                    this.ctx.fillText(this.data.updates[key].toString(),275+250*x,250+100*y)
+                    this.ctx.fillText(this.calcPrice(this.data.updates[key],this.upgrades[key].base,this.upgrades[key].exp),150+250*x,250+100*y)
+                    this.ctx.fillText(this.upgrades[key].eval().toFixed(1)+"->"+this.upgrades[key].eval(1).toFixed(1)+" "+this.upgrades[key].unit,150+250*x,270+100*y)
+                }
+            }
+        }
     }
+}
+
+Game.prototype.calcPrice = function (lvl,base,exp) {
+    return Math.pow(base,Math.pow(exp,lvl));
 }
 
 Game.prototype.bloodToText = function () {
