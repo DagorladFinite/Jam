@@ -3,22 +3,35 @@ function Game(canvasID) {
     this.ctx = document.getElementById(this.canvasID).getContext("2d");
     this.last = null;
     this.scene = "loading";
+    this.overlay = "none";
     this.width = 800;
     this.height = 600;
     this.imageList = [
         "gfx/Backgrounds/CityBackgroundCC01.png",
         "gfx/Backgrounds/CityTreesCC01.png",
+        "gfx/menubg.png",
         
     ];
     this.humanList = [
         "gfx/Characters/CharacterCC01.png",
         "gfx/Characters/CharacterCC02.png",
+        "gfx/Characters/CharacterCC03.png",
     ];
     this.img = {};
     this.loaded = 0;
     this.data = {
         last: Date.now(),
         blood: 0,
+        updates: {
+            maxHumans: 0,
+            humanSpawnTime: 0,
+            autokill: 0,
+            particlesPerHuman: 0,
+            bloodPerParticle: 0,
+            critical: 0,
+            sickness: 0,
+            humanFarm: 0,
+        },
         humanSpawn: 0,
     };
     this.humans = [];
@@ -38,7 +51,7 @@ function Game(canvasID) {
             y: this.height*0.0,
             w: this.width*0.1,
             h: this.height*0.1,
-            img: "gfx/town.jpeg",
+            img: "gfx/Icons/ButtonCityCC01.png",
             onclick: function () {
                 this.moveTo("town");
             }.bind(this),
@@ -48,7 +61,7 @@ function Game(canvasID) {
             y: this.height*0.0,
             w: this.width*0.1,
             h: this.height*0.1,
-            img: "gfx/minigame.jpg",
+            img: "gfx/Icons/ButtonGameCC01.png",
             onclick: function () {
                 this.moveTo("minigame");
             }.bind(this),
@@ -58,7 +71,7 @@ function Game(canvasID) {
             y: this.height*0.0,
             w: this.width*0.1,
             h: this.height*0.1,
-            img: "gfx/upgrade.gif",
+            img: "gfx/Icons/ButtonUpgradesCC01.png",
             onclick: function () {
                 this.moveTo("upgrade");
             }.bind(this),
@@ -68,7 +81,7 @@ function Game(canvasID) {
             y: this.height*0.0,
             w: this.width*0.1,
             h: this.height*0.1,
-            img: "gfx/achievement.png",
+            img: "gfx/Icons/ButtonAchievementsCC01.png",
             onclick: function () {
                 this.moveTo("achievement");
             }.bind(this),
@@ -78,7 +91,7 @@ function Game(canvasID) {
             y: this.height*0.0,
             w: this.width*0.1,
             h: this.height*0.1,
-            img: "gfx/credits.gif",
+            img: "gfx/Icons/ButtonCreditsCC01.png",
             onclick: function () {
                 this.moveTo("credits");
             }.bind(this),
@@ -88,7 +101,7 @@ function Game(canvasID) {
             y: this.height*0.0,
             w: this.width*0.1,
             h: this.height*0.1,
-            img: "gfx/options.png",
+            img: "gfx/Icons/ButtonOptionsCC01.png",
             onclick: function () {
                 this.moveTo("options");
             }.bind(this),
@@ -98,13 +111,39 @@ function Game(canvasID) {
     for (var i=0; i<this.humanList.length; ++i) this.imageList.push(this.humanList[i]);
     this.particlesa = [];
     this.particlesb = [];
-    this.ppb = 50;
     this.ps = 4;
+    console.log(this.getMaxHumans(),this.getHumanSpawnTime());
+}
+
+Game.prototype.getMaxHumans = function (extra) {
+    if (typeof extra == "undefined") extra = 0;
+    return this.data.updates.maxHumans+extra+10;
+}
+Game.prototype.getHumanSpawnTime = function (extra) {
+    if (typeof extra == "undefined") extra = 0;
+    return (100/(this.data.updates.humanSpawnTime+extra+33))*1000;
+}
+Game.prototype.getParticlesPerHuman = function (extra) {
+    if (typeof extra == "undefined") extra = 0;
+    return this.data.updates.particlesPerHuman+extra+1;
+}
+Game.prototype.getBloodPerParticle = function (extra) {
+    if (typeof extra == "undefined") extra = 0;
+    return this.data.updates.bloodPerParticle+1+extra;
+}
+Game.prototype.getCritical = function (extra) {
+    if (typeof extra == "undefined") extra = 0;
+    return (this.data.updates.critical+extra)/100+(this.data.updates.critical+extra);
 }
 
 
 Game.prototype.moveTo = function (target) {
-    console.log(target);
+    if (target == "upgrade") {
+        this.overlay = target;
+    } else if (target == "town") {
+        this.overlay = "none";
+        this.scene = target;
+    }
 }
 
 Game.prototype.load = function () {
@@ -268,6 +307,15 @@ Game.prototype.draw = function () {
         this.ctx.drawImage(this.img[this.imageList[1]].img,0,0,this.width,this.height);
         this.drawHeader();
         this.drawParticles(this.particlesb);
+        this.drawOverlay();
+    }
+}
+
+Game.prototype.drawOverlay = function () {
+    if (this.overlay=="upgrade") {
+        this.ctx.fillStyle="rgba(127,127,127,0.5)"
+        this.ctx.fillRect(0,60,this.width,this.height-60);
+        this.ctx.drawImage(this.img["gfx/menubg.png"].img,50,100,this.width-100,this.height-140);
     }
 }
 
@@ -326,9 +374,9 @@ Game.prototype.updateTime = function (timestamp) {
 }
 
 Game.prototype.updateHumans = function (now) { 
-    if (this.humans.length<10 && this.data.humanSpawn<now) {
+    if (this.humans.length<this.getMaxHumans() && this.data.humanSpawn<now) {
         this.spawnHuman();
-        this.data.humanSpawn = now + 5;
+        this.data.humanSpawn = now + this.getHumanSpawnTime();
     }
     for (var i=this.humans.length-1; i>=0; --i) {
         this.humans[i].x += this.humans[i].dir * this.humans[i].speed;
@@ -341,7 +389,7 @@ Game.prototype.updateHumans = function (now) {
 Game.prototype.advanceTo = function (timestamp) {
     var delta = timestamp - this.data.last;
     this.data.last = timestamp;
-    this.data.blood += Math.ceil(delta);
+    //this.data.blood += Math.ceil(delta);
     var encrypted = CryptoJS.AES.encrypt(JSON.stringify(this.data), this.secret).toString();
     localStorage.setItem("data",encrypted);
 }
@@ -368,6 +416,7 @@ Game.prototype.updateParticles = function () {
             this.particlesb[i].x += (tx-this.particlesb[i].x+this.particlesb[i].vx)/dist*alpha;
             this.particlesb[i].y += (ty-this.particlesb[i].y)/dist*alpha;
         } else {
+            this.data.blood+=this.getBloodPerParticle();
             this.particlesb.splice(i,1)[0];
         }
     }
@@ -402,7 +451,9 @@ Game.prototype.kill = function (dead) {
     var miny = (dead.y * this.height)-h/4;
     var maxy = (dead.y * this.height)+h/4;
     var now = Date.now();
-    for (var i=0; i<this.ppb; ++i) {
+    var crit = 1;
+    if (Math.random()<this.getCritical()) crit=3;
+    for (var i=0; i<this.getParticlesPerHuman()*crit; ++i) {
         var part = {
             x: x,
             y: y,
