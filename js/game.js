@@ -439,8 +439,6 @@ Game.prototype.draw = function () {
 
 Game.prototype.drawOverlay = function () {
     if (this.overlay=="upgrade") {
-        this.ctx.fillStyle="rgba(127,127,127,0.5)"
-        this.ctx.fillRect(0,60,this.width,this.height-60);
         this.ctx.drawImage(this.img["gfx/Backgrounds/UpgradesBackgroundCC01.png"].img,25,100,this.width-50,this.height-140);
         if (this.overlay=="upgrade") {
             var w=3;
@@ -494,6 +492,10 @@ Game.prototype.bloodToText = function (amount) {
 }
 
 Game.prototype.drawHeader = function () {
+    if (this.overlay!="none") {
+        this.ctx.fillStyle="rgba(255,120,120,0.5)"
+        this.ctx.fillRect(0,0,this.width,this.height);
+    }
     /*this.ctx.fillStyle="black";
     this.ctx.fillRect(this.width*0.3,this.height*0.0,this.width*0.4,this.height*0.1);*/
     this.ctx.drawImage(this.img["gfx/Backgrounds/BannerCC01.png"].img,0,0,this.width,128);
