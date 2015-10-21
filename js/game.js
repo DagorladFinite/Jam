@@ -244,9 +244,11 @@ Game.prototype.moveTo = function (target) {
         this.scene = target;
     } else if (target == "minigame") {
         this.overlay = "none";
-        this.scene = target;
-        this.current = 0;
-        this.hqueue = [];
+        if (this.scene!=target) {
+            this.scene = target;
+            this.current = 0;
+            this.hqueue = [];
+        }
     }
 }
 
@@ -472,6 +474,12 @@ Game.prototype.draw = function () {
                 this.ctx.restore();
             }
         }
+        this.ctx.font = "20px GameFont";
+        this.ctx.fillStyle = "black";
+        this.ctx.textAlign = "left";
+        this.ctx.textBaseLine = "bottom";
+        this.ctx.fillText("Current: "+this.current.toString(),30,100);
+        this.ctx.fillText("Record: "+this.data.record.toString(),30,140);
     }
 }
 
