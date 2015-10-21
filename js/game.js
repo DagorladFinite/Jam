@@ -12,6 +12,7 @@ function Game(canvasID) {
         "gfx/Backgrounds/UpgradesBackgroundCC01.png",
         "gfx/Icons/UpgradeButonCC01.png",
         "gfx/Backgrounds/BannerCC01.png",
+        "gfx/Backgrounds/MiniGameBackgroundCC01.png",
     ];
     this.humanList = [
         "gfx/Characters/CharacterCC01.png",
@@ -36,6 +37,9 @@ function Game(canvasID) {
             rainingBlood: 0,
         },
         humanSpawn: 0,
+        kills: 0,
+        record: 0,
+        bodies: 0,
     };
     this.upgrades = {
         maxHumans: {
@@ -432,7 +436,7 @@ Game.prototype.draw = function () {
         this.drawParticles(this.particlesb);
         this.drawOverlay();
     } else if (this.scene == "minigame") {
-        this.ctx.drawImage(this.img[this.imageList[0]].img,0,0,this.width,this.height);
+        this.ctx.drawImage(this.img["gfx/Backgrounds/MiniGameBackgroundCC01.png"].img,0,0,this.width,this.height);
         this.drawHeader();
     }
 }
@@ -618,7 +622,9 @@ Game.prototype.kill = function (dead) {
     var maxy = (dead.y * this.height)+h/4;
     var now = Date.now();
     var crit = 1;
-    if (Math.random()<this.getCritical()) crit=3;
+    this.data.kills+=1;
+    this.data.bodies+=1;
+    if (Math.random()<this.getCritical()/100) crit=3;
     for (var i=0; i<this.getParticlesPerHuman()*crit; ++i) {
         var part = {
             x: x,
