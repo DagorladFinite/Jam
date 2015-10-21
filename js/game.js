@@ -11,12 +11,13 @@ function Game(canvasID) {
         "gfx/Backgrounds/CityTreesCC01.png",
         "gfx/Backgrounds/UpgradesBackgroundCC01.png",
         "gfx/Icons/UpgradeButonCC01.png",
-        
+        "gfx/Backgrounds/BannerCC01.png",
     ];
     this.humanList = [
         "gfx/Characters/CharacterCC01.png",
         "gfx/Characters/CharacterCC02.png",
         "gfx/Characters/CharacterCC03.png",
+        "gfx/Characters/CharacterCC04.png",
     ];
     this.img = {};
     this.loaded = 0;
@@ -493,8 +494,9 @@ Game.prototype.bloodToText = function (amount) {
 }
 
 Game.prototype.drawHeader = function () {
-    this.ctx.fillStyle="black";
-    this.ctx.fillRect(this.width*0.3,this.height*0.0,this.width*0.4,this.height*0.1);
+    /*this.ctx.fillStyle="black";
+    this.ctx.fillRect(this.width*0.3,this.height*0.0,this.width*0.4,this.height*0.1);*/
+    this.ctx.drawImage(this.img["gfx/Backgrounds/BannerCC01.png"].img,0,0,this.width,128);
     this.ctx.font = "20px GameFont";
     this.ctx.fillStyle = "red";
     this.ctx.textAlign = "center";
