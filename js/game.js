@@ -9,7 +9,7 @@ function Game(canvasID) {
     this.imageList = [
         "gfx/Backgrounds/CityBackgroundCC01.png",
         "gfx/Backgrounds/CityTreesCC01.png",
-        "gfx/menubg.png",
+        "gfx/Backgrounds/UpgradesBackgroundCC01.png",
         "gfx/Icons/UpgradeButonCC01.png",
         
     ];
@@ -234,6 +234,9 @@ Game.prototype.moveTo = function (target) {
     } else if (target == "town") {
         this.overlay = "none";
         this.scene = target;
+    } else if (target == "minigame") {
+        this.overlay = "none";
+        this.scene = target;
     }
 }
 
@@ -378,6 +381,8 @@ Game.prototype.release = function (x,y,id) {
                     }
                 }
             }
+        } else if (this.scene =="minigame") {
+
         }
     }
 }
@@ -425,6 +430,9 @@ Game.prototype.draw = function () {
         this.drawHeader();
         this.drawParticles(this.particlesb);
         this.drawOverlay();
+    } else if (this.scene == "minigame") {
+        this.ctx.drawImage(this.img[this.imageList[0]].img,0,0,this.width,this.height);
+        this.drawHeader();
     }
 }
 
@@ -432,7 +440,7 @@ Game.prototype.drawOverlay = function () {
     if (this.overlay=="upgrade") {
         this.ctx.fillStyle="rgba(127,127,127,0.5)"
         this.ctx.fillRect(0,60,this.width,this.height-60);
-        this.ctx.drawImage(this.img["gfx/menubg.png"].img,50,100,this.width-100,this.height-140);
+        this.ctx.drawImage(this.img["gfx/Backgrounds/UpgradesBackgroundCC01.png"].img,25,100,this.width-50,this.height-140);
         if (this.overlay=="upgrade") {
             var w=3;
             var h=3;
@@ -517,9 +525,10 @@ Game.prototype.updateTime = function (timestamp) {
     } else {
         var now = Date.now();
         if (this.scene=="town") {
-            this.updateHumans(now);
-            this.updateParticles();
+            
         }
+        this.updateHumans(now);
+        this.updateParticles();
         if (this.data.last<now) {
             this.advanceTo(now);
         }
