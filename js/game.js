@@ -503,7 +503,7 @@ Game.prototype.drawHeader = function () {
     this.ctx.fillStyle = "red";
     this.ctx.textAlign = "center";
     this.ctx.textBaseLine = "middle";
-    this.ctx.fillText(this.bloodToText(this.data.blood),this.width/2,this.height*0.065);
+    this.ctx.fillText(this.bloodToText(this.data.blood),this.width/2,this.height*0.065-5);
     for (var i=0; i<this.menu.length; ++i) {
         this.ctx.drawImage(this.img[this.menu[i].img].img,this.menu[i].x,this.menu[i].y,this.menu[i].w,this.menu[i].h);
     }
