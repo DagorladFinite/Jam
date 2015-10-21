@@ -26,12 +26,13 @@ function Game(canvasID) {
         updates: {
             maxHumans: 0,
             humanSpawnTime: 0,
-            autokill: 0,
             particlesPerHuman: 0,
             bloodPerParticle: 0,
             critical: 0,
-            sickness: 0,
+            autokill: 0,
             humanFarm: 0,
+            satanicRitual: 0,
+            rainingBlood: 0,
         },
         humanSpawn: 0,
     };
@@ -45,20 +46,20 @@ function Game(canvasID) {
             unit: "Humans",
         },
         humanSpawnTime: {
-            title: "",
+            title: "Doctors",
             base: 10,
             exp: 1.1,
             ord: 1,
             eval: this.getHumanSpawnTime.bind(this),
             unit: "ms",
         },
-        autokill: {
-            title: "",
+        critical: {
+            title: "Coagulation",
             base: 10,
             exp: 1.1,
             ord: 2,
-            eval: this.getMaxHumans.bind(this),
-            unit: "Kills/s",
+            eval: this.getCritical.bind(this),
+            unit: "%",
         },
         particlesPerHuman: {
             title: "Polycythemia",
@@ -76,29 +77,37 @@ function Game(canvasID) {
             eval: this.getBloodPerParticle.bind(this),
             unit: "Blood",
         },
-        critical: {
-            title: "",
+        autokill: {
+            title: "Sickness",
             base: 10,
             exp: 1.1,
             ord: 5,
-            eval: this.getCritical.bind(this),
-            unit: "%",
-        },
-        sickness: {
-            title: "",
-            base: 10,
-            exp: 1.1,
-            ord: 6,
-            eval: this.getMaxHumans.bind(this),
+            eval: this.getAutokill.bind(this),
             unit: "Kills/s",
         },
         humanFarm: {
-            title: "",
+            title: "Human farm",
+            base: 10,
+            exp: 1.1,
+            ord: 6,
+            eval: this.getHumanFarms.bind(this),
+            unit: "Blood/s",
+        },
+        satanicRitual: {
+            title: "Satanic Rituals",
             base: 10,
             exp: 1.1,
             ord: 7,
-            eval: this.getMaxHumans.bind(this),
-            unit: "Blood",
+            eval: this.getSatanicRitual.bind(this),
+            unit: "Blood/s",
+        },
+        rainingBlood: {
+            title: "Raining blood",
+            base: 10,
+            exp: 1.1,
+            ord: 8,
+            eval: this.getRainingBlood.bind(this),
+            unit: "Blood/s",
         },
     };
     this.humans = [];
@@ -202,7 +211,22 @@ Game.prototype.getCritical = function (extra) {
     if (typeof extra == "undefined") extra = 0;
     return (this.data.updates.critical+extra)/100+(this.data.updates.critical+extra);
 }
-
+Game.prototype.getAutokill = function (extra) {
+    if (typeof extra == "undefined") extra = 0;
+    return (100/(this.data.updates.autokill+extra+33))*1000;
+}
+Game.prototype.getHumanFarms = function (extra) {
+    if (typeof extra == "undefined") extra = 0;
+    return (this.data.updates.humanFarm+extra)*10;
+}
+Game.prototype.getSatanicRitual = function (extra) {
+    if (typeof extra == "undefined") extra = 0;
+    return (this.data.updates.satanicRitual+extra)*100;
+}
+Game.prototype.getRainingBlood = function (extra) {
+    if (typeof extra == "undefined") extra = 0;
+    return (this.data.updates.rainingBlood+extra)*1000;
+}
 
 Game.prototype.moveTo = function (target) {
     if (target == "upgrade") {
@@ -425,7 +449,7 @@ Game.prototype.drawOverlay = function () {
                     this.ctx.fillText(this.data.updates[key].toString(),252+250*x,245+100*y)
                     this.ctx.fillText(this.bloodToText(this.calcPrice(this.data.updates[key],this.upgrades[key].base,this.upgrades[key].exp)),
                             140+250*x,245+100*y)
-                    this.ctx.fillText(this.upgrades[key].eval().toFixed(1)+"->"+this.upgrades[key].eval(1).toFixed(1)+" "+this.upgrades[key].unit,
+                    this.ctx.fillText(this.fix(this.upgrades[key].eval())+"->"+this.fix(this.upgrades[key].eval(1))+" "+this.upgrades[key].unit,
                             140+250*x,267+100*y)
                 }
             }
@@ -599,4 +623,9 @@ Game.prototype.buyUpgrade = function (key) {
         this.data.blood-=price;
         this.data.updates[key]+=1;
     }
+}
+
+Game.prototype.fix = function (val) {
+    if (val==Math.floor(val)) return val.toString();
+    else return val.toFixed(1);
 }
