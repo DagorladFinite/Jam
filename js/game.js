@@ -247,6 +247,7 @@ Game.prototype.load = function () {
 }
 
 Game.prototype.init = function () {
+    document.getElementsByTagName("div")[0].style.cursor="url('gfx/Cursor/CursorNormalCC01.png') 32 64, auto";
     this.load();
     window.onkeydown = this.keydown.bind(this);
     document.getElementById(this.canvasID).onmousedown = this.mousedown.bind(this);
@@ -275,6 +276,7 @@ Game.prototype.keydown = function (e) {
 }
 
 Game.prototype.mousedown = function (e) {
+    document.getElementsByTagName("div")[0].style.cursor="url('gfx/Cursor/CursorClickedCC01.png') 32 64, auto";
     var parentPosition = getPosition(e.currentTarget);
     var x = e.clientX - parentPosition.x;
     var y = e.clientY - parentPosition.y;
@@ -287,6 +289,7 @@ Game.prototype.mousemove = function (e) {
     this.move(x,y,0);
 }
 Game.prototype.mouseup = function (e) {
+    document.getElementsByTagName("div")[0].style.cursor="url('gfx/Cursor/CursorNormalCC01.png') 32 64, auto";
     var parentPosition = getPosition(e.currentTarget);
     var x = e.clientX - parentPosition.x;
     var y = e.clientY - parentPosition.y;
@@ -311,6 +314,7 @@ Game.prototype.touchmove = function (e) {
     }
 }
 Game.prototype.touchup = function (e) {
+
     var obj=event.changedTouches||event.originalEvent.changedTouches;
     for (var i=0; i<obj.length; ++i) {
         var x = obj[i].pageX-obj[i].target.offsetLeft;
@@ -439,16 +443,23 @@ Game.prototype.drawOverlay = function () {
                     /*this.ctx.fillStyle="black";
                     this.ctx.fillRect(50+250*x,200+100*y,200,75);*/
                     this.ctx.drawImage(this.img["gfx/Icons/UpgradeButonCC01.png"].img,50+250*x,200+100*y,225,75);
-                    this.ctx.fillStyle="red";
-                    this.ctx.strokeStyle="#AA0000";
+                    this.ctx.fillStyle="black";
+                    this.ctx.strokeStyle="red";
                     this.ctx.font = "12px GameFont";
                     this.ctx.textAlign = "center";
                     this.ctx.textBaseLine = "bottom";
                     this.ctx.strokeText(this.upgrades[key].title,140+250*x,220+100*y)
                     this.ctx.fillText(this.upgrades[key].title,140+250*x,220+100*y)
+                    this.ctx.fillStyle="white";
                     this.ctx.fillText(this.data.updates[key].toString(),252+250*x,245+100*y)
-                    this.ctx.fillText(this.bloodToText(this.calcPrice(this.data.updates[key],this.upgrades[key].base,this.upgrades[key].exp)),
-                            140+250*x,245+100*y)
+                    var price = this.calcPrice(this.data.updates[key],this.upgrades[key].base,this.upgrades[key].exp);
+                    if (price>this.data.blood) {
+                        this.ctx.fillStyle="black";
+                        this.ctx.fillText(this.bloodToText(price),140+250*x,245+100*y);
+                        this.ctx.fillStyle="white";
+                    } else {
+                        this.ctx.fillText(this.bloodToText(price),140+250*x,245+100*y);
+                    }
                     this.ctx.fillText(this.fix(this.upgrades[key].eval())+"->"+this.fix(this.upgrades[key].eval(1))+" "+this.upgrades[key].unit,
                             140+250*x,267+100*y)
                 }
