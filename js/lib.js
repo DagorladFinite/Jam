@@ -29,3 +29,23 @@ function randomInt(a,b) {
 function dist2d(x,y,x0,y0) {
     return Math.sqrt((x-x0)*(x-x0)+(y-y0)*(y-y0));
 }
+
+function placeTextInside(ctx,x,y,w,h,text) {
+    var words = text.split(" ");
+    ctx.font = "20px GameFont";
+    ctx.fillStyle="black";
+    ctx.textAlign ="left";
+    ctx.textBaseline = "top";
+    var l = 0; // line
+    var o = 0; // offset
+    for (var i=0; i<words.length; ++i) {
+        var ww = ctx.measureText(words[i]).width;
+        console.log(ww);
+        if (o+ww>w) {
+            ++l;
+            o=0;
+        }
+        ctx.fillText(words[i],x+o,y+l*25);
+        o+=ww+15;
+    }
+}

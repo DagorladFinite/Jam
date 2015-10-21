@@ -13,6 +13,7 @@ function Game(canvasID) {
         "gfx/Icons/UpgradeButonCC01.png",
         "gfx/Backgrounds/BannerCC01.png",
         "gfx/Backgrounds/MiniGameBackgroundCC01.png",
+        "gfx/Icons/TextBubbleCC01.png",
     ];
     this.humanList = [
         "gfx/Characters/CharacterCC01.png",
@@ -22,6 +23,7 @@ function Game(canvasID) {
     ];
     this.img = {};
     this.loaded = 0;
+    this.current = 0;
     this.data = {
         last: Date.now(),
         blood: 500,
@@ -39,7 +41,7 @@ function Game(canvasID) {
         humanSpawn: 0,
         kills: 0,
         record: 0,
-        bodies: 0,
+        bodies: 200,
     };
     this.upgrades = {
         maxHumans: {
@@ -116,6 +118,7 @@ function Game(canvasID) {
         },
     };
     this.humans = [];
+    this.hqueue = [];
     this.secret = "Are you really going to do this? u bstrd!";
     this.units = [
         "Gallon",
@@ -242,6 +245,8 @@ Game.prototype.moveTo = function (target) {
     } else if (target == "minigame") {
         this.overlay = "none";
         this.scene = target;
+        this.current = 0;
+        this.hqueue = [];
     }
 }
 
@@ -438,6 +443,35 @@ Game.prototype.draw = function () {
     } else if (this.scene == "minigame") {
         this.ctx.drawImage(this.img["gfx/Backgrounds/MiniGameBackgroundCC01.png"].img,0,0,this.width,this.height);
         this.drawHeader();
+        for (var i=this.hqueue.length-1; i>=0; --i) {
+            var h = map(this.hqueue[i].y,150,450,64,256);
+            if (this.hqueue[i].y>450) h = 256;
+            var w = h/2;
+            var x = this.width/2-w/2+this.hqueue[i].x;
+            var y = this.hqueue[i].y-h;
+            this.ctx.drawImage(
+                this.img[this.humanList[this.hqueue[i].type]].img,
+                x,y,w,h
+            );
+            if (this.hqueue[i].y<=450) {
+                var factor = map(this.hqueue[i].y,150,450,0.25,1);
+                var bw = factor*300;
+                var bh = factor*150;
+                var bx = 0;
+                var by = y-h*0.2;
+                if (this.hqueue[i].side==0) {
+                    bx = x+w+10;
+                } else {
+                    bx = x-10-bw;
+                }
+                this.ctx.save();
+                this.ctx.translate(bx,by);
+                this.ctx.scale(factor,factor);
+                this.ctx.drawImage(this.img["gfx/Icons/TextBubbleCC01.png"].img,0,0,300,150);
+                placeTextInside(this.ctx,300*0.2,150*0.2,300*0.6,150*0.6,phrases[this.hqueue[i].text]);
+                this.ctx.restore();
+            }
+        }
     }
 }
 
@@ -534,6 +568,8 @@ Game.prototype.updateTime = function (timestamp) {
         var now = Date.now();
         if (this.scene=="town") {
             
+        } else if (this.scene=="minigame") {
+            this.updateMinigame();
         }
         this.updateHumans(now);
         this.updateParticles();
@@ -552,6 +588,29 @@ Game.prototype.updateHumans = function (now) {
         this.humans[i].x += this.humans[i].dir * this.humans[i].speed;
         if ((this.humans[i].dir==-1 && this.humans[i].x<-0.2) || (this.humans[i].dir==1 && this.humans[i].x>1.2)) {
             this.humans.splice(i,1);
+        }
+    }
+}
+
+Game.prototype.updateMinigame = function () {
+    if (this.hqueue.length==0 || (this.hqueue[this.hqueue.length-1].y>200 && this.data.bodies>0)) {
+        this.hqueue.push({
+            y:150,
+            x: map(Math.random(),0,1,-20,20),
+            text: randomInt(0,phrases.length/2)*2,
+            type: randomInt(0,this.humanList.length),
+            side: ((this.hqueue.length==0)?0:(this.hqueue[this.hqueue.length-1].side+1)%2),
+        });
+        --this.data.bodies;
+    }
+
+    for (var i=this.hqueue.length-1; i>=0; --i) {
+        if (this.hqueue[i].y<450) {
+            this.hqueue[i].y+=map(this.hqueue[i].y,150,450,0.8,1.6)*(1-1/(this.current/10+2));
+        } else if (this.hqueue[i].y<this.height+256) {
+            this.hqueue[i].y+=(this.hqueue[i].y-400)*0.02;
+        } else {
+            this.hqueue.splice(i,1);
         }
     }
 }
