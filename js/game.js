@@ -10,6 +10,7 @@ function Game(canvasID) {
         "gfx/Backgrounds/CityBackgroundCC01.png",
         "gfx/Backgrounds/CityTreesCC01.png",
         "gfx/menubg.png",
+        "gfx/Icons/UpgradeButonCC01.png",
         
     ];
     this.humanList = [
@@ -21,7 +22,7 @@ function Game(canvasID) {
     this.loaded = 0;
     this.data = {
         last: Date.now(),
-        blood: 0,
+        blood: 500,
         updates: {
             maxHumans: 0,
             humanSpawnTime: 0,
@@ -312,19 +313,41 @@ Game.prototype.release = function (x,y,id) {
         for (var i=0; i<this.menu.length; ++i) {
             if (inside(x,y,this.menu[i].x,this.menu[i].y,this.menu[i].w,this.menu[i].h)) {
                 this.menu[i].onclick();
-                break;
+                return;
             }
         }
         if (this.scene == "town") {
-            var w = 64;
-            var h = 128;
-            for (var i=this.humans.length-1; i>=0; --i) {
-                var cx = (this.humans[i].x * this.width)-w/2;
-                var cy = (this.humans[i].y * this.height)-h;
-                if (inside(x,y,cx,cy,w,h)) {
-                    console.log(x,y,cx,cy,w,h);
-                    this.kill(this.humans.splice(i,1)[0]);
-                    break;
+            if (this.overlay=="upgrade") {
+                // close overlay
+                if (!inside(x,y,50,100,this.width-100,this.height-140)) {
+                    this.overlay="none";
+                    return;
+                }
+                if (this.overlay=="upgrade") {
+                    var w = 3;
+                    var h = 3;
+                    for (var key in this.upgrades) {
+                        if (this.upgrades.hasOwnProperty(key)) {
+                            var x0=50+250*(this.upgrades[key].ord%w);
+                            var y0=200+100*Math.floor(this.upgrades[key].ord/h);
+                            if (inside(x,y,x0,y0,225,75)) {
+                                this.buyUpgrade(key);
+                                return;
+                            }
+                        }
+                    }
+                }
+            } else {
+                var w = 64;
+                var h = 128;
+                for (var i=this.humans.length-1; i>=0; --i) {
+                    var cx = (this.humans[i].x * this.width)-w/2;
+                    var cy = (this.humans[i].y * this.height)-h;
+                    if (inside(x,y,cx,cy,w,h)) {
+                        console.log(x,y,cx,cy,w,h);
+                        this.kill(this.humans.splice(i,1)[0]);
+                        return;
+                    }
                 }
             }
         }
@@ -389,16 +412,21 @@ Game.prototype.drawOverlay = function () {
                 if (this.upgrades.hasOwnProperty(key)) {
                     var x=this.upgrades[key].ord%w;
                     var y=Math.floor(this.upgrades[key].ord/h);
-                    this.ctx.fillStyle="black";
-                    this.ctx.fillRect(50+250*x,200+100*y,200,75);
+                    /*this.ctx.fillStyle="black";
+                    this.ctx.fillRect(50+250*x,200+100*y,200,75);*/
+                    this.ctx.drawImage(this.img["gfx/Icons/UpgradeButonCC01.png"].img,50+250*x,200+100*y,225,75);
                     this.ctx.fillStyle="red";
-                    this.ctx.font = "16px GameFont";
+                    this.ctx.strokeStyle="#AA0000";
+                    this.ctx.font = "12px GameFont";
                     this.ctx.textAlign = "center";
                     this.ctx.textBaseLine = "bottom";
-                    this.ctx.fillText(this.upgrades[key].title,150+250*x,220+100*y)
-                    this.ctx.fillText(this.data.updates[key].toString(),275+250*x,250+100*y)
-                    this.ctx.fillText(this.calcPrice(this.data.updates[key],this.upgrades[key].base,this.upgrades[key].exp),150+250*x,250+100*y)
-                    this.ctx.fillText(this.upgrades[key].eval().toFixed(1)+"->"+this.upgrades[key].eval(1).toFixed(1)+" "+this.upgrades[key].unit,150+250*x,270+100*y)
+                    this.ctx.strokeText(this.upgrades[key].title,140+250*x,220+100*y)
+                    this.ctx.fillText(this.upgrades[key].title,140+250*x,220+100*y)
+                    this.ctx.fillText(this.data.updates[key].toString(),252+250*x,245+100*y)
+                    this.ctx.fillText(this.bloodToText(this.calcPrice(this.data.updates[key],this.upgrades[key].base,this.upgrades[key].exp)),
+                            140+250*x,245+100*y)
+                    this.ctx.fillText(this.upgrades[key].eval().toFixed(1)+"->"+this.upgrades[key].eval(1).toFixed(1)+" "+this.upgrades[key].unit,
+                            140+250*x,267+100*y)
                 }
             }
         }
@@ -406,18 +434,18 @@ Game.prototype.drawOverlay = function () {
 }
 
 Game.prototype.calcPrice = function (lvl,base,exp) {
-    return Math.pow(base,Math.pow(exp,lvl));
+    return Math.round(Math.pow(base,Math.pow(exp,lvl)));
 }
 
-Game.prototype.bloodToText = function () {
+Game.prototype.bloodToText = function (amount) {
     var exp = 0;
-    if (this.data.blood>0) {
-        exp = Math.floor(getBaseLog(1000,this.data.blood));
+    if (amount>0) {
+        exp = Math.floor(getBaseLog(1000,amount));
     }
     if (exp==0) {
-        return this.data.blood.toString()+" "+this.units[exp];
+        return amount.toString()+" "+this.units[exp];
     } else {
-        return (this.data.blood/Math.pow(1000,exp)).toFixed(1).toString()+" "+this.units[Math.floor(exp)];
+        return (amount/Math.pow(1000,exp)).toFixed(1).toString()+" "+this.units[Math.floor(exp)];
     }
 }
 
@@ -428,7 +456,7 @@ Game.prototype.drawHeader = function () {
     this.ctx.fillStyle = "red";
     this.ctx.textAlign = "center";
     this.ctx.textBaseLine = "middle";
-    this.ctx.fillText(this.bloodToText(),this.width/2,this.height*0.065);
+    this.ctx.fillText(this.bloodToText(this.data.blood),this.width/2,this.height*0.065);
     for (var i=0; i<this.menu.length; ++i) {
         this.ctx.drawImage(this.img[this.menu[i].img].img,this.menu[i].x,this.menu[i].y,this.menu[i].w,this.menu[i].h);
     }
@@ -562,5 +590,13 @@ Game.prototype.drawParticles = function (particles) {
     this.ctx.fillStyle = "red";
     for (var i=particles.length-1; i>=0; --i) {
         this.ctx.fillRect(particles[i].x,particles[i].y,this.ps,this.ps);
+    }
+}
+
+Game.prototype.buyUpgrade = function (key) {
+    var price = this.calcPrice(this.data.updates[key],this.upgrades[key].base,this.upgrades[key].exp);
+    if (this.data.blood>=price) {
+        this.data.blood-=price;
+        this.data.updates[key]+=1;
     }
 }
