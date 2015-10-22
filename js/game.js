@@ -14,6 +14,8 @@ function Game(canvasID) {
         "gfx/Backgrounds/BannerCC01.png",
         "gfx/Backgrounds/MiniGameBackgroundCC01.png",
         "gfx/Icons/TextBubbleCC01.png",
+        "gfx/Icons/right.png",
+        "gfx/Icons/wrong.png",
     ];
     this.humanList = [
         "gfx/Characters/CharacterCC01.png",
@@ -196,7 +198,27 @@ function Game(canvasID) {
     this.particlesa = [];
     this.particlesb = [];
     this.ps = 4;
-    console.log(this.getMaxHumans(),this.getHumanSpawnTime());
+    this.mgb = [
+        {
+            x: 0,
+            y: this.height*0.8,
+            w: this.height*0.2,
+            h: this.height*0.2,
+            img: "gfx/Icons/right.png",
+            onclick: function () {
+                this.judge(true);
+            }.bind(this),
+        },{
+            x: this.width-this.height*0.2,
+            y: this.height*0.8,
+            w: this.height*0.2,
+            h: this.height*0.2,
+            img: "gfx/Icons/wrong.png",
+            onclick:function () {
+                this.judge(false);
+            }.bind(this),
+        }
+    ];
 }
 
 Game.prototype.getMaxHumans = function (extra) {
@@ -387,14 +409,40 @@ Game.prototype.release = function (x,y,id) {
                     var cx = (this.humans[i].x * this.width)-w/2;
                     var cy = (this.humans[i].y * this.height)-h;
                     if (inside(x,y,cx,cy,w,h)) {
-                        console.log(x,y,cx,cy,w,h);
                         this.kill(this.humans.splice(i,1)[0]);
                         return;
                     }
                 }
             }
         } else if (this.scene =="minigame") {
-
+            if (this.overlay=="upgrade") {
+                // close overlay
+                if (!inside(x,y,50,100,this.width-100,this.height-140)) {
+                    this.overlay="none";
+                    return;
+                }
+                if (this.overlay=="upgrade") {
+                    var w = 3;
+                    var h = 3;
+                    for (var key in this.upgrades) {
+                        if (this.upgrades.hasOwnProperty(key)) {
+                            var x0=50+250*(this.upgrades[key].ord%w);
+                            var y0=200+100*Math.floor(this.upgrades[key].ord/h);
+                            if (inside(x,y,x0,y0,225,75)) {
+                                this.buyUpgrade(key);
+                                return;
+                            }
+                        }
+                    }
+                }
+            } else {
+                for (var i=0; i<this.mgb.length; ++i) {
+                    if (inside(x,y,this.mgb[i].x,this.mgb[i].y,this.mgb[i].w,this.mgb[i].h)) {
+                        this.mgb[i].onclick();
+                        return;
+                    }
+                } 
+            }
         }
     }
 }
@@ -480,6 +528,10 @@ Game.prototype.draw = function () {
         this.ctx.textBaseLine = "bottom";
         this.ctx.fillText("Current: "+this.current.toString(),30,100);
         this.ctx.fillText("Record: "+this.data.record.toString(),30,140);
+        for (var i=0; i<this.mgb.length; ++i) {
+            this.ctx.drawImage(this.img[this.mgb[i].img].img,this.mgb[i].x,this.mgb[i].y,this.mgb[i].w,this.mgb[i].h);
+        }
+        this.drawOverlay();
     }
 }
 
@@ -601,7 +653,7 @@ Game.prototype.updateHumans = function (now) {
 }
 
 Game.prototype.updateMinigame = function () {
-    if (this.hqueue.length==0 || (this.hqueue[this.hqueue.length-1].y>200 && this.data.bodies>0)) {
+    if ((this.hqueue.length!=0 && this.hqueue[this.hqueue.length-1].y>200 && this.data.bodies>0) || (this.hqueue.length==0 && this.data.bodies>0)) {
         this.hqueue.push({
             y:150,
             x: map(Math.random(),0,1,-20,20),
@@ -614,11 +666,13 @@ Game.prototype.updateMinigame = function () {
 
     for (var i=this.hqueue.length-1; i>=0; --i) {
         if (this.hqueue[i].y<450) {
-            this.hqueue[i].y+=map(this.hqueue[i].y,150,450,0.8,1.6)*(1-1/(this.current/10+2));
+            this.hqueue[i].y+=map(this.hqueue[i].y,150,450,0.8,1.6)*(1-1/(this.current/50+1.5));
         } else if (this.hqueue[i].y<this.height+256) {
             this.hqueue[i].y+=(this.hqueue[i].y-400)*0.02;
         } else {
-            this.hqueue.splice(i,1);
+            this.current = 0;
+            this.hqueue = [];
+            //this.hqueue.splice(i,1);
         }
     }
 }
@@ -725,4 +779,34 @@ Game.prototype.buyUpgrade = function (key) {
 Game.prototype.fix = function (val) {
     if (val==Math.floor(val)) return val.toString();
     else return val.toFixed(1);
+}
+
+Game.prototype.judge = function (val) {
+    if (this.hqueue.length!=0 && this.hqueue[0].y<450) {
+        var target = phrases[this.hqueue[0].text+1];
+        if (val==true) {
+            if (target==0) {
+                console.log("FAIL");
+                this.current = 0;
+            } else {
+                console.log("RIGHT");
+                ++this.current;
+                if (this.current>this.data.record) {
+                    this.data.record = this.current;
+                }
+            }
+        } else {
+            if (target==2) {
+                console.log("FAIL");
+                this.current = 0;
+            } else {
+                console.log("RIGHT");
+                ++this.current;
+                if (this.current>this.data.record) {
+                    this.data.record = this.current;
+                }
+            }
+        }
+        this.hqueue.splice(0,1);
+    }
 }

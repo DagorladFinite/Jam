@@ -40,7 +40,6 @@ function placeTextInside(ctx,x,y,w,h,text) {
     var o = 0; // offset
     for (var i=0; i<words.length; ++i) {
         var ww = ctx.measureText(words[i]).width;
-        console.log(ww);
         if (o+ww>w) {
             ++l;
             o=0;
