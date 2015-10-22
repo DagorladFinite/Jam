@@ -43,7 +43,8 @@ function Game(canvasID) {
         humanSpawn: 0,
         kills: 0,
         record: 0,
-        bodies: 200,
+        bodies: 0,
+        lastkill: Date.now(),
     };
     this.upgrades = {
         maxHumans: {
@@ -64,8 +65,8 @@ function Game(canvasID) {
         },
         critical: {
             title: "Coagulation",
-            base: 10,
-            exp: 1.1,
+            base: 50,
+            exp: 1.07,
             ord: 2,
             eval: this.getCritical.bind(this),
             unit: "%",
@@ -92,7 +93,7 @@ function Game(canvasID) {
             exp: 1.1,
             ord: 5,
             eval: this.getAutokill.bind(this),
-            unit: "Kills/s",
+            unit: "ms/kill",
         },
         humanFarm: {
             title: "Human farm",
@@ -583,7 +584,7 @@ Game.prototype.bloodToText = function (amount) {
         exp = Math.floor(getBaseLog(1000,amount));
     }
     if (exp==0) {
-        return amount.toString()+" "+this.units[exp];
+        return Math.round(amount).toString()+" "+this.units[exp];
     } else {
         return (amount/Math.pow(1000,exp)).toFixed(1).toString()+" "+this.units[Math.floor(exp)];
     }
@@ -680,9 +681,25 @@ Game.prototype.updateMinigame = function () {
 Game.prototype.advanceTo = function (timestamp) {
     var delta = timestamp - this.data.last;
     this.data.last = timestamp;
-    //this.data.blood += Math.ceil(delta);
+    this.data.blood += ((this.getHumanFarms()+this.getSatanicRitual()+this.getRainingBlood())*this.getRecordMul()*(delta/1000));
+    var delta2 = timestamp - this.data.lastkill;
+    var extra = delta2%this.getAutokill();
+    var times = Math.floor(delta2/this.getAutokill());
+    if (times>=2) {
+        this.data.lastkill = timestamp - extra;
+        this.data.blood += times * this.getParticlesPerHuman() * this.getBloodPerParticle();
+        this.data.kills+=times;
+        this.data.bodies+=times;
+    } else if (times>=1 && this.humans.length>0) {
+        this.data.lastkill = timestamp - extra;
+        this.kill(this.humans.splice(randomInt(0,this.humans.length),1)[0]);
+    }
     var encrypted = CryptoJS.AES.encrypt(JSON.stringify(this.data), this.secret).toString();
     localStorage.setItem("data",encrypted);
+}
+
+Game.prototype.getRecordMul = function () {
+    return 1;
 }
 
 Game.prototype.updateParticles = function () {
