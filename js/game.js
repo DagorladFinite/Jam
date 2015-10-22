@@ -184,7 +184,7 @@ function Game(canvasID) {
             h: this.height*0.1,
             img: "gfx/Icons/ButtonAchievementsCC01.png",
             onclick: function () {
-                this.moveTo("achievement");
+                this.moveTo("achievements");
             }.bind(this),
         },
         {
@@ -385,6 +385,19 @@ function Game(canvasID) {
             bonus: 2,
         },
     ];
+    this.page = 0;
+    this.abl = {
+        x: 100,
+        y: 500,
+        w: 50,
+        h: 50,
+    }
+    this.abr = {
+        x: 700,
+        y: 500,
+        w: 50,
+        h: 50,
+    }
 }
 
 Game.prototype.getMaxHumans = function (extra) {
@@ -438,6 +451,8 @@ Game.prototype.moveTo = function (target) {
             this.current = 0;
             this.hqueue = [];
         }
+    } else if (target=="achievements") {
+        this.overlay = target;
     }
 }
 
@@ -568,6 +583,14 @@ Game.prototype.release = function (x,y,id) {
                             }
                         }
                     }
+                }
+            } else if (this.overlay=="achievements") {
+                if (inside(x,y,this.abl.x,this.abl.y,this.abl.w,this.abl.h)) {
+                    --this.page;
+                    if (this.page<0) this.page=Math.floor(this.achievements.length/3);
+                } else if (inside(x,y,this.abr.x,this.abr.y,this.abr.w,this.abr.h)) {
+                    ++this.page;
+                    if (this.page>this.achievements.length/3) this.page=0;
                 }
             } else {
                 var w = 64;
@@ -713,7 +736,7 @@ Game.prototype.draw = function () {
 }
 
 Game.prototype.drawOverlay = function () {
-    if (this.overlay=="upgrade") {
+    if (this.overlay=="upgrade" || this.overlay=="achievements" || this.overlay=="credits" || this.overlay=="options") {
         this.ctx.drawImage(this.img["gfx/Backgrounds/UpgradesBackgroundCC01.png"].img,25,100,this.width-50,this.height-140);
         if (this.overlay=="upgrade") {
             var w=3;
@@ -746,6 +769,25 @@ Game.prototype.drawOverlay = function () {
                             140+250*x,267+100*y)
                 }
             }
+        } else if (this.overlay=="achievements") {
+            for (var i=0; i<3; ++i) {
+                var p=this.page*3+i;
+                if (this.achievements[p].eval()) {
+                    this.ctx.fillStyle="red";
+                } else {
+                    this.ctx.fillStyle="white";
+                }
+                this.ctx.font = "20px GameFont";
+                this.ctx.textAlign = "center";
+                this.ctx.textBaseLine = "bottom";
+                this.ctx.fillText(this.achievements[p].title,this.width/2,175+120*i);
+                this.ctx.fillText(this.achievements[p].cond,this.width/2,208+120*i);
+                this.ctx.fillText(this.achievements[p].comment,this.width/2,241+120*i);
+                
+                this.ctx.fillText("x"+this.achievements[p].bonus.toString(),this.width-100,208+120*i);
+            }
+            this.ctx.fillRect(this.abr.x,this.abr.y,this.abr.w,this.abr.h);
+            this.ctx.fillRect(this.abl.x,this.abl.y,this.abl.w,this.abl.h);
         }
     }
 }
