@@ -510,15 +510,21 @@ Game.prototype.draw = function () {
                 var bh = factor*150;
                 var bx = 0;
                 var by = y-h*0.2;
+                this.ctx.save();
                 if (this.hqueue[i].side==0) {
                     bx = x+w+10;
+                    this.ctx.translate(bx+300*factor,by);
+                    this.ctx.scale(-factor,factor);
                 } else {
                     bx = x-10-bw;
+                    this.ctx.translate(bx,by);
+                    this.ctx.scale(factor,factor);
                 }
-                this.ctx.save();
-                this.ctx.translate(bx,by);
-                this.ctx.scale(factor,factor);
                 this.ctx.drawImage(this.img["gfx/Icons/TextBubbleCC01.png"].img,0,0,300,150);
+                if (this.hqueue[i].side==0) {
+                    this.ctx.scale(-1,1);
+                    this.ctx.translate(-300,0);
+                }
                 placeTextInside(this.ctx,300*0.2,150*0.2,300*0.6,150*0.6,phrases[this.hqueue[i].text]);
                 this.ctx.restore();
             }
@@ -687,7 +693,7 @@ Game.prototype.advanceTo = function (timestamp) {
     var times = Math.floor(delta2/this.getAutokill());
     if (times>=2) {
         this.data.lastkill = timestamp - extra;
-        this.data.blood += times * this.getParticlesPerHuman() * this.getBloodPerParticle();
+        this.data.blood += times * this.getParticlesPerHuman() * this.getBloodPerParticle() * this.getRecordMul();
         this.data.kills+=times;
         this.data.bodies+=times;
     } else if (times>=1 && this.humans.length>0) {
@@ -724,7 +730,7 @@ Game.prototype.updateParticles = function () {
             this.particlesb[i].x += (tx-this.particlesb[i].x+this.particlesb[i].vx)/dist*alpha;
             this.particlesb[i].y += (ty-this.particlesb[i].y)/dist*alpha;
         } else {
-            this.data.blood+=this.getBloodPerParticle();
+            this.data.blood+=this.getBloodPerParticle()*this.getRecordMul();
             this.particlesb.splice(i,1)[0];
         }
     }
