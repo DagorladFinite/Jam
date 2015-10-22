@@ -22,6 +22,8 @@ function Game(canvasID) {
         "gfx/Backgrounds/MiniGameCloudGoodCC01.png",
         "gfx/Icons/MiniGameHandGoodCC01.png",
         "gfx/Icons/MiniGameHandBadCC01.png",
+        "gfx/Icons/LeftArrowCC01.png",
+        "gfx/Icons/RightArrowCC01.png",
     ];
     this.humanList = [
         "gfx/Characters/CharacterCC01.png",
@@ -387,14 +389,14 @@ function Game(canvasID) {
     ];
     this.page = 0;
     this.abl = {
-        x: 100,
-        y: 500,
+        x: 80,
+        y: 480,
         w: 50,
         h: 50,
     }
     this.abr = {
-        x: 700,
-        y: 500,
+        x: 670,
+        y: 480,
         w: 50,
         h: 50,
     }
@@ -772,22 +774,24 @@ Game.prototype.drawOverlay = function () {
         } else if (this.overlay=="achievements") {
             for (var i=0; i<3; ++i) {
                 var p=this.page*3+i;
-                if (this.achievements[p].eval()) {
-                    this.ctx.fillStyle="red";
-                } else {
-                    this.ctx.fillStyle="white";
+                if (p<this.achievements.length) {
+                    if (this.achievements[p].eval()) {
+                        this.ctx.fillStyle="red";
+                    } else {
+                        this.ctx.fillStyle="white";
+                    }
+                    this.ctx.font = "20px GameFont";
+                    this.ctx.textAlign = "center";
+                    this.ctx.textBaseLine = "bottom";
+                    this.ctx.fillText(this.achievements[p].title,this.width/2,175+120*i);
+                    this.ctx.fillText(this.achievements[p].cond,this.width/2,208+120*i);
+                    this.ctx.fillText(this.achievements[p].comment,this.width/2,241+120*i);
+                    
+                    this.ctx.fillText("x"+this.achievements[p].bonus.toString(),this.width-100,208+120*i);
                 }
-                this.ctx.font = "20px GameFont";
-                this.ctx.textAlign = "center";
-                this.ctx.textBaseLine = "bottom";
-                this.ctx.fillText(this.achievements[p].title,this.width/2,175+120*i);
-                this.ctx.fillText(this.achievements[p].cond,this.width/2,208+120*i);
-                this.ctx.fillText(this.achievements[p].comment,this.width/2,241+120*i);
-                
-                this.ctx.fillText("x"+this.achievements[p].bonus.toString(),this.width-100,208+120*i);
             }
-            this.ctx.fillRect(this.abr.x,this.abr.y,this.abr.w,this.abr.h);
-            this.ctx.fillRect(this.abl.x,this.abl.y,this.abl.w,this.abl.h);
+            this.ctx.drawImage(this.img["gfx/Icons/RightArrowCC01.png"].img,this.abr.x,this.abr.y,this.abr.w,this.abr.h);
+            this.ctx.drawImage(this.img["gfx/Icons/LeftArrowCC01.png"].img,this.abl.x,this.abl.y,this.abl.w,this.abl.h);
         }
     }
 }
