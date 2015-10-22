@@ -20,8 +20,8 @@ function Game(canvasID) {
         "gfx/Backgrounds/MiniGameFireBackCC01.png",
         "gfx/Backgrounds/MiniGameCloudBadCC01.png",
         "gfx/Backgrounds/MiniGameCloudGoodCC01.png",
-        "gfx/Icons/right.png",
-        "gfx/Icons/wrong.png",
+        "gfx/Icons/MiniGameHandGoodCC01.png",
+        "gfx/Icons/MiniGameHandBadCC01.png",
     ];
     this.humanList = [
         "gfx/Characters/CharacterCC01.png",
@@ -57,6 +57,8 @@ function Game(canvasID) {
         record: 0,
         bodies: 0,
         lastkill: Date.now(),
+        judge: [0,0,0],
+        kill: [0,0,0,0],
     };
     this.upgrades = {
         maxHumans: {
@@ -222,7 +224,7 @@ function Game(canvasID) {
             y: this.height*0.8,
             w: this.height*0.2,
             h: this.height*0.2,
-            img: "gfx/Icons/right.png",
+            img: "gfx/Icons/MiniGameHandGoodCC01.png",
             onclick: function () {
                 this.judge(true);
             }.bind(this),
@@ -231,7 +233,7 @@ function Game(canvasID) {
             y: this.height*0.8,
             w: this.height*0.2,
             h: this.height*0.2,
-            img: "gfx/Icons/wrong.png",
+            img: "gfx/Icons/MiniGameHandBadCC01.png",
             onclick:function () {
                 this.judge(false);
             }.bind(this),
@@ -239,10 +241,130 @@ function Game(canvasID) {
     ];
     this.achievements = [
         {
-            title: "",
-            cond: "",
+            title: "First of many",
+            cond: "Kill your first innocent",
             eval: function () {
-
+                return this.data.kills>0;
+            }.bind(this),
+            bonus: 2,
+        },
+        {
+            title: "Open wound",
+            cond: "Kill 10 innocents",
+            eval: function () {
+                return this.data.kills>=10;
+            }.bind(this),
+            bonus: 2,
+        },
+        {
+            title: "Mass murder",
+            cond: "Kill 100 innocents",
+            eval: function () {
+                return this.data.kills>=100;
+            }.bind(this),
+            bonus: 2,
+        },
+        {
+            title: "Bloodbath",
+            cond: "Kill 1000 innocents",
+            eval: function () {
+                return this.data.kills>=1000;
+            }.bind(this),
+            bonus: 2,
+        },
+        {
+            title: "The rivers will run red",
+            cond: "Kill 10000 innocents",
+            eval: function () {
+                return this.data.kills>=10000;
+            }.bind(this),
+            bonus: 2,
+        },
+        {
+            title: "Genocide",
+            cond: "Kill 100000 innocents",
+            eval: function () {
+                return this.data.kills>=100000;
+            }.bind(this),
+            bonus: 2,
+        },
+        {
+            title: "Red planet",
+            cond: "Kill 1000000 innocents",
+            eval: function () {
+                return this.data.kills>=1000000;
+            }.bind(this),
+            bonus: 2,
+        },
+        {
+            title: "Friendly fire",
+            cond: "Kill 10 metalheads",
+            eval: function () {
+                return this.data.kill[1]>=10;
+            }.bind(this),
+            bonus: 2,
+        },
+        {
+            title: "England’s finest",
+            cond: "Kill 10 chavs",
+            eval: function () {
+                return this.data.kill[3]>=10;
+            }.bind(this),
+            bonus: 2,
+        },
+        {
+            title: "Deal with the devil",
+            cond: "Kill 10 bussinessmen",
+            eval: function () {
+                return this.data.kill[2]>=10;
+            }.bind(this),
+            bonus: 2,
+        },
+        {
+            title: "Hip to be squashed",
+            cond: "Kill 10 hipsters",
+            eval: function () {
+                return this.data.kill[0]>=10;
+            }.bind(this),
+            bonus: 2,
+        },
+        {
+            title: "Heaven",
+            cond: "Send your first soul to heaven",
+            eval: function () {
+                return this.data.judge[0]>0;
+            }.bind(this),
+            bonus: 2,
+        },
+        {
+            title: "Hell",
+            cond: "Send your first soul to hell",
+            eval: function () {
+                return this.data.judge[1]>0;
+            }.bind(this),
+            bonus: 2,
+        },
+        {
+            title: "Judge…",
+            cond: "Judge correctly 10 people",
+            eval: function () {
+                return this.data.judge[0]+this.data.judge[1]>=10;
+            }.bind(this),
+            bonus: 2,
+        },
+        {
+            title: "Jury…",
+            cond: "Judge correctly 100 people",
+            eval: function () {
+                return this.data.judge[0]+this.data.judge[1]>=100;
+            }.bind(this),
+            bonus: 2,
+        },
+        {
+            title: "And executor",
+            cond: "Judge incorrectly 10 people",
+            eval: function () {
+                return this.data.judge[2]>=10;
             }.bind(this),
             bonus: 2,
         },
@@ -798,6 +920,7 @@ Game.prototype.kill = function (dead) {
     var maxy = (dead.y * this.height)+h/4;
     var now = Date.now();
     var crit = 1;
+    ++this.data.kill[dead.type];
     this.data.kills+=1;
     this.data.bodies+=1;
     if (Math.random()<this.getCritical()/100) crit=3;
@@ -829,7 +952,6 @@ Game.prototype.buyUpgrade = function (key) {
         if (key == "autokill" && this.data.updates[key]==0) this.data.lastkill=Date.now();
         this.data.blood-=price;
         this.data.updates[key]+=1;
-
     }
 }
 
@@ -843,10 +965,10 @@ Game.prototype.judge = function (val) {
         var target = phrases[this.hqueue[0].text+1];
         if (val==true) {
             if (target==0) {
-                console.log("FAIL");
                 this.current = 0;
+                ++this.data.judge[2];
             } else {
-                console.log("RIGHT");
+                ++this.data.judge[0];
                 ++this.current;
                 if (this.current>this.data.record) {
                     this.data.record = this.current;
@@ -854,10 +976,10 @@ Game.prototype.judge = function (val) {
             }
         } else {
             if (target==2) {
-                console.log("FAIL");
+                ++this.data.judge[2];
                 this.current = 0;
             } else {
-                console.log("RIGHT");
+                ++this.data.judge[1];
                 ++this.current;
                 if (this.current>this.data.record) {
                     this.data.record = this.current;
