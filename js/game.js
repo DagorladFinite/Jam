@@ -32,8 +32,8 @@ function Game(canvasID) {
     this.humanList2 = [
         ["gfx/Characters/sprite_CharacterCC011.png","gfx/Characters/sprite_CharacterCC012.png","gfx/Characters/sprite_CharacterCC013.png","gfx/Characters/sprite_CharacterCC014.png"],
         ["gfx/Characters/sprite_CharacterCC021.png","gfx/Characters/sprite_CharacterCC022.png","gfx/Characters/sprite_CharacterCC023.png","gfx/Characters/sprite_CharacterCC024.png"],
-        ["gfx/Characters/CharacterCC03.png"],
-        ["gfx/Characters/CharacterCC04.png"],
+        ["gfx/Characters/sprite_CharacterCC031.png","gfx/Characters/sprite_CharacterCC032.png","gfx/Characters/sprite_CharacterCC033.png","gfx/Characters/sprite_CharacterCC034.png"],
+        ["gfx/Characters/sprite_CharacterCC041.png","gfx/Characters/sprite_CharacterCC042.png","gfx/Characters/sprite_CharacterCC043.png","gfx/Characters/sprite_CharacterCC044.png"],
     ];
     this.img = {};
     this.loaded = 0;
@@ -243,6 +243,7 @@ function Game(canvasID) {
         {
             title: "First of many",
             cond: "Kill your first innocent",
+            comment: "rando",
             eval: function () {
                 return this.data.kills>0;
             }.bind(this),
@@ -251,6 +252,7 @@ function Game(canvasID) {
         {
             title: "Open wound",
             cond: "Kill 10 innocents",
+            comment: "rando",
             eval: function () {
                 return this.data.kills>=10;
             }.bind(this),
@@ -259,6 +261,7 @@ function Game(canvasID) {
         {
             title: "Mass murder",
             cond: "Kill 100 innocents",
+            comment: "rando",
             eval: function () {
                 return this.data.kills>=100;
             }.bind(this),
@@ -267,6 +270,7 @@ function Game(canvasID) {
         {
             title: "Bloodbath",
             cond: "Kill 1000 innocents",
+            comment: "rando",
             eval: function () {
                 return this.data.kills>=1000;
             }.bind(this),
@@ -275,6 +279,7 @@ function Game(canvasID) {
         {
             title: "The rivers will run red",
             cond: "Kill 10000 innocents",
+            comment: "rando",
             eval: function () {
                 return this.data.kills>=10000;
             }.bind(this),
@@ -283,6 +288,7 @@ function Game(canvasID) {
         {
             title: "Genocide",
             cond: "Kill 100000 innocents",
+            comment: "rando",
             eval: function () {
                 return this.data.kills>=100000;
             }.bind(this),
@@ -291,6 +297,7 @@ function Game(canvasID) {
         {
             title: "Red planet",
             cond: "Kill 1000000 innocents",
+            comment: "rando",
             eval: function () {
                 return this.data.kills>=1000000;
             }.bind(this),
@@ -299,6 +306,7 @@ function Game(canvasID) {
         {
             title: "Friendly fire",
             cond: "Kill 10 metalheads",
+            comment: "rando",
             eval: function () {
                 return this.data.kill[1]>=10;
             }.bind(this),
@@ -307,6 +315,7 @@ function Game(canvasID) {
         {
             title: "England’s finest",
             cond: "Kill 10 chavs",
+            comment: "rando",
             eval: function () {
                 return this.data.kill[3]>=10;
             }.bind(this),
@@ -315,6 +324,7 @@ function Game(canvasID) {
         {
             title: "Deal with the devil",
             cond: "Kill 10 bussinessmen",
+            comment: "rando",
             eval: function () {
                 return this.data.kill[2]>=10;
             }.bind(this),
@@ -323,6 +333,7 @@ function Game(canvasID) {
         {
             title: "Hip to be squashed",
             cond: "Kill 10 hipsters",
+            comment: "rando",
             eval: function () {
                 return this.data.kill[0]>=10;
             }.bind(this),
@@ -331,6 +342,7 @@ function Game(canvasID) {
         {
             title: "Heaven",
             cond: "Send your first soul to heaven",
+            comment: "rando",
             eval: function () {
                 return this.data.judge[0]>0;
             }.bind(this),
@@ -339,6 +351,7 @@ function Game(canvasID) {
         {
             title: "Hell",
             cond: "Send your first soul to hell",
+            comment: "rando",
             eval: function () {
                 return this.data.judge[1]>0;
             }.bind(this),
@@ -347,6 +360,7 @@ function Game(canvasID) {
         {
             title: "Judge…",
             cond: "Judge correctly 10 people",
+            comment: "rando",
             eval: function () {
                 return this.data.judge[0]+this.data.judge[1]>=10;
             }.bind(this),
@@ -355,6 +369,7 @@ function Game(canvasID) {
         {
             title: "Jury…",
             cond: "Judge correctly 100 people",
+            comment: "rando",
             eval: function () {
                 return this.data.judge[0]+this.data.judge[1]>=100;
             }.bind(this),
@@ -363,6 +378,7 @@ function Game(canvasID) {
         {
             title: "And executor",
             cond: "Judge incorrectly 10 people",
+            comment: "rando",
             eval: function () {
                 return this.data.judge[2]>=10;
             }.bind(this),
