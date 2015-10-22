@@ -9,6 +9,8 @@ function Game(canvasID) {
     this.imageList = [
         "gfx/Backgrounds/CityBackgroundCC01.png",
         "gfx/Backgrounds/CityTreesCC01.png",
+        "gfx/Backgrounds/LoadingScreenBackCC01.png",
+        "gfx/Backgrounds/LoadingScreenTopCC01.png",
         "gfx/Backgrounds/UpgradesBackgroundCC01.png",
         "gfx/Icons/UpgradeButonCC01.png",
         "gfx/Backgrounds/BannerCC01.png",
@@ -640,9 +642,20 @@ Game.prototype.release = function (x,y,id) {
 }
 Game.prototype.draw = function () {
     if (this.scene == "loading") {
-        this.ctx.fillStyle="white";
-        this.ctx.fillRect(0,0,this.width, this.height);
         this.ctx.fillStyle="black";
+        this.ctx.fillRect(0,0,this.width, this.height);
+        if (this.img["gfx/Backgrounds/LoadingScreenBackCC01.png"].completed && this.img["gfx/Backgrounds/LoadingScreenTopCC01.png"].completed) {
+            this.ctx.drawImage(this.img["gfx/Backgrounds/LoadingScreenBackCC01.png"].img,0,0,this.width, this.height);
+            this.ctx.fillStyle="#9c2d2d";
+            var w=54;
+            var h=(461-293)*this.loaded;
+            var x0=559;
+            var y0=293+(461-293)*(1-this.loaded);
+            this.ctx.fillRect(x0,y0,w,h);
+            this.ctx.drawImage(this.img["gfx/Backgrounds/LoadingScreenTopCC01.png"].img,0,0,this.width, this.height);
+            
+        }
+        /*this.ctx.fillStyle="black";
         var x0 = this.width * 0.3;
         var w = this.width*0.4;
         var y0 = this.height*0.8;
@@ -650,9 +663,9 @@ Game.prototype.draw = function () {
         this.ctx.fillRect(x0,y0,w,h);
         this.ctx.fillStyle="red";
         var border = 2;
-        this.ctx.fillRect(x0+border,y0+border,(w-border*2)*this.loaded, h-border*2);
+        this.ctx.fillRect(x0+border,y0+border,(w-border*2)*this.loaded, h-border*2);*/
         this.ctx.font = "20px GameFont";
-        this.ctx.fillStyle = "black";
+        this.ctx.fillStyle = "white";
         this.ctx.textAlign = "right";
         this.ctx.textBaseLine = "bottom";
         this.ctx.fillText(this.version,this.width-10,this.height-10)
