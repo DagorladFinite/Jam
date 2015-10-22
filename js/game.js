@@ -14,6 +14,12 @@ function Game(canvasID) {
         "gfx/Backgrounds/BannerCC01.png",
         "gfx/Backgrounds/MiniGameBackgroundCC01.png",
         "gfx/Icons/TextBubbleCC01.png",
+        "gfx/Backgrounds/MiniGameBackgroundCC01.png",
+        "gfx/Backgrounds/MiniGameStairsCC01.png",
+        "gfx/Backgrounds/MiniGameFireFrontCC01.png",
+        "gfx/Backgrounds/MiniGameFireBackCC01.png",
+        "gfx/Backgrounds/MiniGameCloudBadCC01.png",
+        "gfx/Backgrounds/MiniGameCloudGoodCC01.png",
         "gfx/Icons/right.png",
         "gfx/Icons/wrong.png",
     ];
@@ -22,6 +28,12 @@ function Game(canvasID) {
         "gfx/Characters/CharacterCC02.png",
         "gfx/Characters/CharacterCC03.png",
         "gfx/Characters/CharacterCC04.png",
+    ];
+    this.humanList2 = [
+        ["gfx/Characters/sprite_CharacterCC011.png","gfx/Characters/sprite_CharacterCC012.png","gfx/Characters/sprite_CharacterCC013.png","gfx/Characters/sprite_CharacterCC014.png"],
+        ["gfx/Characters/sprite_CharacterCC021.png","gfx/Characters/sprite_CharacterCC022.png","gfx/Characters/sprite_CharacterCC023.png","gfx/Characters/sprite_CharacterCC024.png"],
+        ["gfx/Characters/CharacterCC03.png"],
+        ["gfx/Characters/CharacterCC04.png"],
     ];
     this.img = {};
     this.loaded = 0;
@@ -196,6 +208,11 @@ function Game(canvasID) {
     ];
     for (var i=0; i<this.menu.length; ++i) this.imageList.push(this.menu[i].img);
     for (var i=0; i<this.humanList.length; ++i) this.imageList.push(this.humanList[i]);
+    for (var i=0; i<this.humanList2.length; ++i) {
+        for (var j=0; j<this.humanList2[i].length; ++j) {
+            this.imageList.push(this.humanList2[i][j]);
+        }
+    }
     this.particlesa = [];
     this.particlesb = [];
     this.ps = 4;
@@ -219,6 +236,16 @@ function Game(canvasID) {
                 this.judge(false);
             }.bind(this),
         }
+    ];
+    this.achievements = [
+        {
+            title: "",
+            cond: "",
+            eval: function () {
+
+            }.bind(this),
+            bonus: 2,
+        },
     ];
 }
 
@@ -244,7 +271,8 @@ Game.prototype.getCritical = function (extra) {
 }
 Game.prototype.getAutokill = function (extra) {
     if (typeof extra == "undefined") extra = 0;
-    return (100/(this.data.updates.autokill+extra+33))*1000;
+    if (this.data.updates.autokill+extra==0) return Infinity;
+    else return (200/(this.data.updates.autokill+extra+33))*1000;
 }
 Game.prototype.getHumanFarms = function (extra) {
     if (typeof extra == "undefined") extra = 0;
@@ -472,18 +500,19 @@ Game.prototype.draw = function () {
         var w = 64;
         var h = 128;
         for (var i=0; i<this.humans.length; ++i) {
+            var sid = Math.floor((Date.now()+this.humans[i].y*100)/100)%this.humanList2[this.humans[i].type].length;
             if (this.humans[i].dir==-1) {
                 this.ctx.save();
                 this.ctx.scale(-1,1);
                 this.ctx.translate(-this.width,0);
                 var x = this.width - (this.humans[i].x * this.width)-w/2;
                 var y = (this.humans[i].y * this.height)-h;
-                this.ctx.drawImage(this.img[this.humanList[this.humans[i].type]].img,x,y,w,h);
+                this.ctx.drawImage(this.img[this.humanList2[this.humans[i].type][sid]].img,x,y,w,h);
                 this.ctx.restore();
             } else {
                 var x = (this.humans[i].x * this.width)-w/2;
                 var y = (this.humans[i].y * this.height)-h;
-                this.ctx.drawImage(this.img[this.humanList[this.humans[i].type]].img,x,y,w,h);
+                this.ctx.drawImage(this.img[this.humanList2[this.humans[i].type][sid]].img,x,y,w,h);
             }
         }
         this.drawParticles(this.particlesa);
@@ -493,6 +522,8 @@ Game.prototype.draw = function () {
         this.drawOverlay();
     } else if (this.scene == "minigame") {
         this.ctx.drawImage(this.img["gfx/Backgrounds/MiniGameBackgroundCC01.png"].img,0,0,this.width,this.height);
+        this.ctx.drawImage(this.img["gfx/Backgrounds/MiniGameStairsCC01.png"].img,0,0,this.width,this.height);
+        this.ctx.drawImage(this.img["gfx/Backgrounds/MiniGameFireBackCC01.png"].img,0,0,this.width,this.height);
         this.drawHeader();
         for (var i=this.hqueue.length-1; i>=0; --i) {
             var h = map(this.hqueue[i].y,150,450,64,256);
@@ -538,6 +569,7 @@ Game.prototype.draw = function () {
         for (var i=0; i<this.mgb.length; ++i) {
             this.ctx.drawImage(this.img[this.mgb[i].img].img,this.mgb[i].x,this.mgb[i].y,this.mgb[i].w,this.mgb[i].h);
         }
+        this.ctx.drawImage(this.img["gfx/Backgrounds/MiniGameFireFrontCC01.png"].img,0,0,this.width,this.height);
         this.drawOverlay();
     }
 }
@@ -794,8 +826,10 @@ Game.prototype.drawParticles = function (particles) {
 Game.prototype.buyUpgrade = function (key) {
     var price = this.calcPrice(this.data.updates[key],this.upgrades[key].base,this.upgrades[key].exp);
     if (this.data.blood>=price) {
+        if (key == "autokill" && this.data.updates[key]==0) this.data.lastkill=Date.now();
         this.data.blood-=price;
         this.data.updates[key]+=1;
+
     }
 }
 
