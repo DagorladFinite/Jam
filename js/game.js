@@ -259,7 +259,7 @@ function Game(canvasID) {
             eval: function () {
                 return this.data.kills>=10;
             }.bind(this),
-            bonus: 1.5,
+            bonus: 1.1,
         },
         {
             title: "Mass murder",
@@ -268,7 +268,7 @@ function Game(canvasID) {
             eval: function () {
                 return this.data.kills>=100;
             }.bind(this),
-            bonus: 2,
+            bonus: 1.5,
         },
         {
             title: "You might be the best at this!",
@@ -277,7 +277,7 @@ function Game(canvasID) {
             eval: function () {
                 return this.data.kills>=1000;
             }.bind(this),
-            bonus: 5,
+            bonus: 2,
         },
         {
             title: "The rivers will run red",
@@ -344,19 +344,19 @@ function Game(canvasID) {
         },
         {
             title: "Heaven",
-            cond: "Send your first soul to heaven",
+            cond: "Send 25 souls to heaven",
             comment: "He was a good boy",
             eval: function () {
-                return this.data.judge[0]>0;
+                return this.data.judge[0]>=25;
             }.bind(this),
             bonus: 1.5,
         },
         {
             title: "Hell",
-            cond: "Send your first soul to hell",
+            cond: "Send 25 souls to hell",
             comment: "Where do bad folks go when they die?",
             eval: function () {
-                return this.data.judge[1]>0;
+                return this.data.judge[1]>=25;
             }.bind(this),
             bonus: 1.5,
         },
@@ -367,7 +367,7 @@ function Game(canvasID) {
             eval: function () {
                 return this.data.judge[0]+this.data.judge[1]>=10;
             }.bind(this),
-            bonus: 2,
+            bonus: 1.5,
         },
         {
             title: "Jury…",
@@ -394,7 +394,7 @@ function Game(canvasID) {
             eval: function () {
                 return this.dcheck(1,1);
             }.bind(this),
-            bonus: 1.5,
+            bonus: 1.1,
         },
         {
             title: "Baddest",
