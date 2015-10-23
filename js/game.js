@@ -676,10 +676,17 @@ Game.prototype.release = function (x,y,id) {
                     }
                 }
                 if (inside(x,y,150,250,200,80)) {
-                    console.log("export");
+
+                    prompt("Export string",CryptoJS.AES.encrypt(JSON.stringify(this.data), this.secret).toString());
                 }
                 if (inside(x,y,450,250,200,80)) {
-                    console.log("import");
+                    var input = prompt("Import string","");
+                    try {
+                        this.data = JSON.parse(CryptoJS.AES.decrypt(input, this.secret).toString(CryptoJS.enc.Utf8));
+                        alert("Imported");
+                    } catch(err) {
+                        alert("Invalid input, reason: "+err);
+                    }
                 }
             } else {
                 var w = 64;
