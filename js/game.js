@@ -27,6 +27,9 @@ function Game(canvasID) {
         "gfx/Icons/LeftArrowCC01.png",
         "gfx/Icons/RightArrowCC01.png",
         "gfx/Backgrounds/CreditsBackgroundCC01.png",
+        "gfx/Icons/AudioButtonOffCC01.png",
+        "gfx/Icons/AudioButtonOnCC01.png",
+        "gfx/Icons/SampleButtonCC01.png",
     ];
     this.humanList = [
         "gfx/Characters/CharacterCC01.png",
@@ -148,6 +151,7 @@ function Game(canvasID) {
         "Gallon",
         "Goats",
         "Humans",
+        "Hippos",
         "Elephants",
         "Whales",
         "Your Mom",
@@ -426,10 +430,11 @@ function Game(canvasID) {
         "soundsquish3": false,
     }
     this.currentaudio=null;
+    this.mute=false;
 }
 
 Game.prototype.play = function (key) {
-    if (this.audio.hasOwnProperty(key)) {
+    if (this.mute==false && this.audio.hasOwnProperty(key)) {
         if (this.audio[key]) {
             if (this.currentaudio!=key) {
                 if (this.currentaudio!=null) {
@@ -483,7 +488,7 @@ Game.prototype.getRainingBlood = function (extra) {
 }
 
 Game.prototype.moveTo = function (target) {
-    if (target == "upgrade" || target=="credits") {
+    if (target == "upgrade" || target=="credits" || target=="options") {
         this.overlay = target;
         this.play("audioshop");
     } else if (target == "town") {
@@ -655,6 +660,27 @@ Game.prototype.release = function (x,y,id) {
                     this.play("audiogame");
                     return;
                 }
+            } else if (this.overlay=="options") {
+                if (!inside(x,y,50,100,this.width-100,this.height-140)) {
+                    this.overlay="none";
+                    this.play("audiogame");
+                    return;
+                }
+                if (inside(x,y,350,140,100,100)) {
+                    if (this.mute) {
+                        this.mute = false;
+                        if (this.currentaudio!=null) document.getElementById(this.currentaudio).play();
+                    } else {
+                        this.mute = true;
+                        if (this.currentaudio!=null) document.getElementById(this.currentaudio).pause();
+                    }
+                }
+                if (inside(x,y,150,250,200,80)) {
+                    console.log("export");
+                }
+                if (inside(x,y,450,250,200,80)) {
+                    console.log("import");
+                }
             } else {
                 var w = 64;
                 var h = 128;
@@ -709,6 +735,27 @@ Game.prototype.release = function (x,y,id) {
                         this.overlay="none";
                         this.play("audiogame");
                         return;
+                    }
+                } else if (this.overlay=="options") {
+                    if (!inside(x,y,50,100,this.width-100,this.height-140)) {
+                        this.overlay="none";
+                        this.play("audiogame");
+                        return;
+                    }
+                    if (inside(x,y,350,140,100,100)) {
+                        if (this.mute) {
+                            this.mute = false;
+                            if (this.currentaudio!=null) document.getElementById(this.currentaudio).play();
+                        } else {
+                            this.mute = true;
+                            if (this.currentaudio!=null) document.getElementById(this.currentaudio).pause();
+                        }
+                    }
+                    if (inside(x,y,150,250,200,80)) {
+                        console.log("export");
+                    }
+                    if (inside(x,y,450,250,200,80)) {
+                        console.log("import");
                     }
                 }
             } else {
@@ -880,6 +927,23 @@ Game.prototype.drawOverlay = function () {
             this.ctx.drawImage(this.img["gfx/Icons/LeftArrowCC01.png"].img,this.abl.x,this.abl.y,this.abl.w,this.abl.h);
         } else if (this.overlay=="credits") {
             this.ctx.drawImage(this.img["gfx/Backgrounds/CreditsBackgroundCC01.png"].img,25,100,this.width-50,this.height-140);
+        } else if (this.overlay=="options") {
+            /*"gfx/Icons/AudioButtonOffCC01.png",
+            "gfx/Icons/AudioButtonOnCC01.png",
+            "gfx/Icons/SampleButtonCC01.png",*/
+            if (this.mute) {
+                this.ctx.drawImage(this.img["gfx/Icons/AudioButtonOffCC01.png"].img,350,140,100,100);
+            } else {
+                this.ctx.drawImage(this.img["gfx/Icons/AudioButtonOnCC01.png"].img,350,140,100,100);
+            }
+            this.ctx.drawImage(this.img["gfx/Icons/SampleButtonCC01.png"].img,150,250,200,80);
+            this.ctx.drawImage(this.img["gfx/Icons/SampleButtonCC01.png"].img,450,250,200,80);
+            this.ctx.fillStyle="white";
+            this.ctx.font = "20px GameFont";
+            this.ctx.textAlign = "center";
+            this.ctx.textBaseLine = "bottom";
+            this.ctx.fillText("Export",250,300);
+            this.ctx.fillText("Import",550,300);
         }
     }
 }
