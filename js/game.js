@@ -669,25 +669,46 @@ Game.prototype.release = function (x,y,id) {
                 }
             }
         } else if (this.scene =="minigame") {
-            if (this.overlay=="upgrade") {
-                // close overlay
-                if (!inside(x,y,50,100,this.width-100,this.height-140)) {
-                    this.overlay="none";
-                    this.play("audiogame");
-                    return;
-                }
+            if (this.overlay!="none") {
                 if (this.overlay=="upgrade") {
-                    var w = 3;
-                    var h = 3;
-                    for (var key in this.upgrades) {
-                        if (this.upgrades.hasOwnProperty(key)) {
-                            var x0=50+250*(this.upgrades[key].ord%w);
-                            var y0=200+100*Math.floor(this.upgrades[key].ord/h);
-                            if (inside(x,y,x0,y0,225,75)) {
-                                this.buyUpgrade(key);
-                                return;
+                    // close overlay
+                    if (!inside(x,y,50,100,this.width-100,this.height-140)) {
+                        this.overlay="none";
+                        this.play("audiogame");
+                        return;
+                    }
+                    if (this.overlay=="upgrade") {
+                        var w = 3;
+                        var h = 3;
+                        for (var key in this.upgrades) {
+                            if (this.upgrades.hasOwnProperty(key)) {
+                                var x0=50+250*(this.upgrades[key].ord%w);
+                                var y0=200+100*Math.floor(this.upgrades[key].ord/h);
+                                if (inside(x,y,x0,y0,225,75)) {
+                                    this.buyUpgrade(key);
+                                    return;
+                                }
                             }
                         }
+                    }
+                } else if (this.overlay=="achievements") {
+                    if (!inside(x,y,50,100,this.width-100,this.height-140)) {
+                        this.overlay="none";
+                        this.play("audiogame");
+                        return;
+                    }
+                    if (inside(x,y,this.abl.x,this.abl.y,this.abl.w,this.abl.h)) {
+                        --this.page;
+                        if (this.page<0) this.page=Math.floor(this.achievements.length/3);
+                    } else if (inside(x,y,this.abr.x,this.abr.y,this.abr.w,this.abr.h)) {
+                        ++this.page;
+                        if (this.page>this.achievements.length/3) this.page=0;
+                    }
+                } else if (this.overlay=="credits") {
+                    if (!inside(x,y,50,100,this.width-100,this.height-140)) {
+                        this.overlay="none";
+                        this.play("audiogame");
+                        return;
                     }
                 }
             } else {
