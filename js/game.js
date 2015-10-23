@@ -404,6 +404,40 @@ function Game(canvasID) {
         w: 50,
         h: 50,
     }
+    this.audio = {
+        "audiogame": true,
+        "audiojudge": true,
+        "audioshop": true,
+        "soundachievement": false,
+        "soundcritical": false,
+        "soundgrunt1": false,
+        "soundgrunt2": false,
+        "soundgrunt3": false,
+        "soundgrunt4": false,
+        "soundgrunt5": false,
+        "soundgrunt6": false,
+        "soundheaven": false,
+        "soundhell": false,
+        "soundclick": false,
+        "soundsquish1": false,
+        "soundsquish2": false,
+        "soundsquish3": false,
+    }
+    this.currentaudio=null;
+}
+
+Game.prototype.play = function (key) {
+    if (this.audio.hasOwnProperty(key)) {
+        if (this.audio[key]) {
+            if (this.currentaudio!=null) {
+                document.getElementById(this.currentaudio).pause();
+            }
+            this.currentaudio = key;
+            document.getElementById(key).play();
+        } else {
+            document.getElementById(key).pause();
+        }
+    }
 }
 
 Game.prototype.getMaxHumans = function (extra) {
