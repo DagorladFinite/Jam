@@ -78,7 +78,7 @@ function Game(canvasID) {
         },
         humanSpawnTime: {
             title: "Doctors",
-            base: 10,
+            base: 20,
             exp: 1.1,
             ord: 1,
             eval: this.getHumanSpawnTime.bind(this),
@@ -86,7 +86,7 @@ function Game(canvasID) {
         },
         critical: {
             title: "Coagulation",
-            base: 50,
+            base: 100,
             exp: 1.07,
             ord: 2,
             eval: this.getCritical.bind(this),
@@ -94,7 +94,7 @@ function Game(canvasID) {
         },
         particlesPerHuman: {
             title: "Polycythemia",
-            base: 10,
+            base: 100,
             exp: 1.1,
             ord: 3,
             eval: this.getParticlesPerHuman.bind(this),
@@ -102,7 +102,7 @@ function Game(canvasID) {
         },
         bloodPerParticle: {
             title: "Leukocytosis",
-            base: 10,
+            base: 1000,
             exp: 1.1,
             ord: 4,
             eval: this.getBloodPerParticle.bind(this),
@@ -110,7 +110,7 @@ function Game(canvasID) {
         },
         autokill: {
             title: "Sickness",
-            base: 10,
+            base: 50000,
             exp: 1.1,
             ord: 5,
             eval: this.getAutokill.bind(this),
@@ -118,7 +118,7 @@ function Game(canvasID) {
         },
         humanFarm: {
             title: "Human farm",
-            base: 10,
+            base: 1000,
             exp: 1.1,
             ord: 6,
             eval: this.getHumanFarms.bind(this),
@@ -126,7 +126,7 @@ function Game(canvasID) {
         },
         satanicRitual: {
             title: "Satanic Rituals",
-            base: 10,
+            base: 1000000,
             exp: 1.1,
             ord: 7,
             eval: this.getSatanicRitual.bind(this),
@@ -134,7 +134,7 @@ function Game(canvasID) {
         },
         rainingBlood: {
             title: "Raining blood",
-            base: 10,
+            base: 1000000000,
             exp: 1.1,
             ord: 8,
             eval: this.getRainingBlood.bind(this),
@@ -450,7 +450,7 @@ Game.prototype.getMaxHumans = function (extra) {
 }
 Game.prototype.getHumanSpawnTime = function (extra) {
     if (typeof extra == "undefined") extra = 0;
-    return (100/(this.data.updates.humanSpawnTime+extra+33))*1000;
+    return (70/(this.data.updates.humanSpawnTime+extra+23))*1000;
 }
 Game.prototype.getParticlesPerHuman = function (extra) {
     if (typeof extra == "undefined") extra = 0;
@@ -471,7 +471,7 @@ Game.prototype.getAutokill = function (extra) {
 }
 Game.prototype.getHumanFarms = function (extra) {
     if (typeof extra == "undefined") extra = 0;
-    return (this.data.updates.humanFarm+extra)*10;
+    return (this.data.updates.humanFarm+extra)*1;
 }
 Game.prototype.getSatanicRitual = function (extra) {
     if (typeof extra == "undefined") extra = 0;
@@ -479,7 +479,7 @@ Game.prototype.getSatanicRitual = function (extra) {
 }
 Game.prototype.getRainingBlood = function (extra) {
     if (typeof extra == "undefined") extra = 0;
-    return (this.data.updates.rainingBlood+extra)*1000;
+    return (this.data.updates.rainingBlood+extra)*10000;
 }
 
 Game.prototype.moveTo = function (target) {
