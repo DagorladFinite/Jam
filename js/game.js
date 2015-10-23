@@ -539,7 +539,7 @@ Game.prototype.moveTo = function (target) {
 }
 
 Game.prototype.load = function () {
-    if (true || !localStorage.getItem("data")) {
+    if (!localStorage.getItem("data")) {
         var encrypted = CryptoJS.AES.encrypt(JSON.stringify(this.data), this.secret).toString();
         localStorage.setItem("data",encrypted);
     } else {
