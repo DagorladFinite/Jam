@@ -2,6 +2,10 @@ To play open the index file from the folder or go to the following link:
 
 http://dagorladfinite.github.io/Jam/index.html
 
+or
+
+http://www.kongregate.com/games/AndreuF/bloody-hell-reaper
+
 Click on poeple to kill them and gather their blood. You can buy upgrades in the shop, so you get bonuses such as blood/s or more blood per kill among others.
 Once you've killed some people you can judge them to get rewards, go to the purgatory and either click on the heaven or hell button to send them there according to your criteria.
 
