@@ -65,7 +65,7 @@ function Game(canvasID) {
         humanSpawn: 0,
         kills: 0,
         record: 0,
-        bodies: 0,
+        bodies: 200,
         lastkill: Date.now(),
         judge: [0,0,0],
         kill: [0,0,0,0,0],
@@ -598,17 +598,17 @@ Game.prototype.touchup = function (e) {
 }
 
 Game.prototype.key = function (key) {
-    console.log("Pressed: "+key);
+    //console.log("Pressed: "+key);
 }
 Game.prototype.press = function (x,y,id) {
-    console.log("M begin",x,y,id);
+    //console.log("M begin",x,y,id);
     this.play("soundclick");
 }
 Game.prototype.move = function (x,y,id) {
     //console.log("M move",x,y,id);
 }
 Game.prototype.release = function (x,y,id) {
-    console.log("M end",x,y,id);
+    //console.log("M end",x,y,id);
     if (this.scene=="loading" && this.loaded==1) {
         this.scene = "town";
         this.play("audiogame");
@@ -759,10 +759,17 @@ Game.prototype.release = function (x,y,id) {
                         }
                     }
                     if (inside(x,y,150,250,200,80)) {
-                        console.log("export");
+
+                        prompt("Export string",CryptoJS.AES.encrypt(JSON.stringify(this.data), this.secret).toString());
                     }
                     if (inside(x,y,450,250,200,80)) {
-                        console.log("import");
+                        var input = prompt("Import string","");
+                        try {
+                            this.data = JSON.parse(CryptoJS.AES.decrypt(input, this.secret).toString(CryptoJS.enc.Utf8));
+                            alert("Imported");
+                        } catch(err) {
+                            alert("Invalid input, reason: "+err);
+                        }
                     }
                 }
             } else {
@@ -859,7 +866,7 @@ Game.prototype.draw = function () {
                     this.ctx.scale(-1,1);
                     this.ctx.translate(-300,0);
                 }
-                placeTextInside(this.ctx,300*0.2,150*0.2,300*0.6,150*0.6,phrases[this.hqueue[i].text]);
+                placeTextInside2(this.ctx,300*0.2,150*0.2,300*0.6,150*0.6,phrases[this.hqueue[i].text],20,1.35);
                 this.ctx.restore();
             }
         }

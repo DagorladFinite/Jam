@@ -48,3 +48,43 @@ function placeTextInside(ctx,x,y,w,h,text) {
         o+=ww+15;
     }
 }
+
+function placeTextInside2(ctx,x,y,w,h,text,fontS,lineF) {
+    ctx.fillStyle="black";
+    ctx.textAlign ="left";
+    ctx.textBaseline = "top";
+    var words = text.split(" ");
+    ctx.font = fontS.toString()+"px GameFont";
+    var fit = false;
+    while (!fit) {
+        var l = 0; // line
+        var o = 0; // offset
+        for (var i=0; i<words.length; ++i) {
+            var ww = ctx.measureText(words[i]).width;
+            if (o+ww>w) {
+                ++l;
+                o=0;
+            }
+            //ctx.fillText(words[i],x+o,y+l*fontS*lineF);
+            o+=ww+15;
+        }
+        if (o==0) --l;
+        var ok = (l*fontS*lineF<h*0.8);
+        if (ok) fit = true;
+        else {
+            fontS-=2;
+            ctx.font = fontS.toString()+"px GameFont";
+        }
+    }
+    var l = 0; // line
+    var o = 0; // offset
+    for (var i=0; i<words.length; ++i) {
+        var ww = ctx.measureText(words[i]).width;
+        if (o+ww>w) {
+            ++l;
+            o=0;
+        }
+        ctx.fillText(words[i],x+o,y+l*fontS*lineF);
+        o+=ww+15;
+    }
+}
