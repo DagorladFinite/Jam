@@ -65,7 +65,7 @@ function Game(canvasID) {
         humanSpawn: 0,
         kills: 0,
         record: 0,
-        bodies: 200,
+        bodies: 0,
         lastkill: Date.now(),
         judge: [0,0,0],
         kill: [0,0,0,0,0],
@@ -1159,7 +1159,11 @@ Game.prototype.kill = function (dead) {
     ++this.data.kill[dead.type];
     this.data.kills+=1;
     this.data.bodies+=1;
-    this.play("soundgrunt"+randomInt(1,7).toString());
+    if (Math.random()<0.01) {
+        this.play("soundgrunt6");
+    } else {
+        this.play("soundgrunt"+randomInt(1,6).toString());
+    }
     if (Math.random()<this.getCritical()/100) {
         crit=this.data.record+1;
         this.play("soundcritical");
