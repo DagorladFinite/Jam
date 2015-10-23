@@ -1139,7 +1139,7 @@ Game.prototype.kill = function (dead) {
     var miny = (dead.y * this.height)-h/4;
     var maxy = (dead.y * this.height)+h/4;
     var now = Date.now();
-    var crit = 1;
+    var crit = 0;
     ++this.data.kill[dead.type];
     this.data.kills+=1;
     this.data.bodies+=1;
