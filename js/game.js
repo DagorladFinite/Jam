@@ -26,6 +26,7 @@ function Game(canvasID) {
         "gfx/Icons/MiniGameHandBadCC01.png",
         "gfx/Icons/LeftArrowCC01.png",
         "gfx/Icons/RightArrowCC01.png",
+        "gfx/Backgrounds/CreditsBackgroundCC01.png",
     ];
     this.humanList = [
         "gfx/Characters/CharacterCC01.png",
@@ -482,7 +483,7 @@ Game.prototype.getRainingBlood = function (extra) {
 }
 
 Game.prototype.moveTo = function (target) {
-    if (target == "upgrade") {
+    if (target == "upgrade" || target=="credits") {
         this.overlay = target;
         this.play("audioshop");
     } else if (target == "town") {
@@ -636,12 +637,23 @@ Game.prototype.release = function (x,y,id) {
                     }
                 }
             } else if (this.overlay=="achievements") {
+                if (!inside(x,y,50,100,this.width-100,this.height-140)) {
+                    this.overlay="none";
+                    this.play("audiogame");
+                    return;
+                }
                 if (inside(x,y,this.abl.x,this.abl.y,this.abl.w,this.abl.h)) {
                     --this.page;
                     if (this.page<0) this.page=Math.floor(this.achievements.length/3);
                 } else if (inside(x,y,this.abr.x,this.abr.y,this.abr.w,this.abr.h)) {
                     ++this.page;
                     if (this.page>this.achievements.length/3) this.page=0;
+                }
+            } else if (this.overlay=="credits") {
+                if (!inside(x,y,50,100,this.width-100,this.height-140)) {
+                    this.overlay="none";
+                    this.play("audiogame");
+                    return;
                 }
             } else {
                 var w = 64;
@@ -845,6 +857,8 @@ Game.prototype.drawOverlay = function () {
             }
             this.ctx.drawImage(this.img["gfx/Icons/RightArrowCC01.png"].img,this.abr.x,this.abr.y,this.abr.w,this.abr.h);
             this.ctx.drawImage(this.img["gfx/Icons/LeftArrowCC01.png"].img,this.abl.x,this.abl.y,this.abl.w,this.abl.h);
+        } else if (this.overlay=="credits") {
+            this.ctx.drawImage(this.img["gfx/Backgrounds/CreditsBackgroundCC01.png"].img,25,100,this.width-50,this.height-140);
         }
     }
 }
