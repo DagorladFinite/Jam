@@ -32,19 +32,21 @@ function Game(canvasID) {
         "gfx/Characters/CharacterCC02.png",
         "gfx/Characters/CharacterCC03.png",
         "gfx/Characters/CharacterCC04.png",
+        "gfx/Characters/CharacterCC05.png",
     ];
     this.humanList2 = [
         ["gfx/Characters/sprite_CharacterCC011.png","gfx/Characters/sprite_CharacterCC012.png","gfx/Characters/sprite_CharacterCC013.png","gfx/Characters/sprite_CharacterCC014.png"],
         ["gfx/Characters/sprite_CharacterCC021.png","gfx/Characters/sprite_CharacterCC022.png","gfx/Characters/sprite_CharacterCC023.png","gfx/Characters/sprite_CharacterCC024.png"],
         ["gfx/Characters/sprite_CharacterCC031.png","gfx/Characters/sprite_CharacterCC032.png","gfx/Characters/sprite_CharacterCC033.png","gfx/Characters/sprite_CharacterCC034.png"],
         ["gfx/Characters/sprite_CharacterCC041.png","gfx/Characters/sprite_CharacterCC042.png","gfx/Characters/sprite_CharacterCC043.png","gfx/Characters/sprite_CharacterCC044.png"],
+        ["gfx/Characters/sprite_CharacterCC051.png","gfx/Characters/sprite_CharacterCC052.png","gfx/Characters/sprite_CharacterCC053.png","gfx/Characters/sprite_CharacterCC054.png"],
     ];
     this.img = {};
     this.loaded = 0;
     this.current = 0;
     this.data = {
         last: Date.now(),
-        blood: 500,
+        blood: 0,
         updates: {
             maxHumans: 0,
             humanSpawnTime: 0,
@@ -62,7 +64,7 @@ function Game(canvasID) {
         bodies: 0,
         lastkill: Date.now(),
         judge: [0,0,0],
-        kill: [0,0,0,0],
+        kill: [0,0,0,0,0],
     };
     this.upgrades = {
         maxHumans: {
@@ -925,7 +927,13 @@ Game.prototype.advanceTo = function (timestamp) {
 }
 
 Game.prototype.getRecordMul = function () {
-    return 1;
+    var mul = 1;
+    for (var i=0; i<this.achievements.length; ++i) {
+        if (this.achievements[i].eval()) {
+            mul*=this.achievements[i].bonus;
+        }
+    }
+    return Math.pow(2,Math.floor(this.data.record/8))*mul;
 }
 
 Game.prototype.updateParticles = function () {
@@ -989,8 +997,8 @@ Game.prototype.kill = function (dead) {
     ++this.data.kill[dead.type];
     this.data.kills+=1;
     this.data.bodies+=1;
-    if (Math.random()<this.getCritical()/100) crit=3;
-    for (var i=0; i<this.getParticlesPerHuman()*crit; ++i) {
+    if (Math.random()<this.getCritical()/100) crit=this.data.record+1;
+    for (var i=0; i<this.getParticlesPerHuman()+crit; ++i) {
         var part = {
             x: x,
             y: y,
