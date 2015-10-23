@@ -74,7 +74,7 @@ function Game(canvasID) {
         maxHumans: {
             title: "Superpopulation",
             base: 10,
-            exp: 1.1,
+            exp: 1.4,
             ord: 0,
             eval: this.getMaxHumans.bind(this),
             unit: "Humans",
@@ -82,7 +82,7 @@ function Game(canvasID) {
         humanSpawnTime: {
             title: "Doctors",
             base: 20,
-            exp: 1.11,
+            exp: 1.25,
             ord: 1,
             eval: this.getHumanSpawnTime.bind(this),
             unit: "ms",
@@ -98,7 +98,7 @@ function Game(canvasID) {
         particlesPerHuman: {
             title: "Polycythemia",
             base: 100,
-            exp: 1.112,
+            exp: 1.315,
             ord: 3,
             eval: this.getParticlesPerHuman.bind(this),
             unit: "Droplets",
@@ -106,7 +106,7 @@ function Game(canvasID) {
         bloodPerParticle: {
             title: "Leukocytosis",
             base: 1000,
-            exp: 1.14,
+            exp: 1.425,
             ord: 4,
             eval: this.getBloodPerParticle.bind(this),
             unit: "Blood",
@@ -114,7 +114,7 @@ function Game(canvasID) {
         autokill: {
             title: "Sickness",
             base: 50000,
-            exp: 1.175,
+            exp: 1.4,
             ord: 5,
             eval: this.getAutokill.bind(this),
             unit: "ms/kill",
@@ -122,7 +122,7 @@ function Game(canvasID) {
         humanFarm: {
             title: "Human farm",
             base: 1000,
-            exp: 1.2,
+            exp: 1.35,
             ord: 6,
             eval: this.getHumanFarms.bind(this),
             unit: "Blood/s",
@@ -130,7 +130,7 @@ function Game(canvasID) {
         satanicRitual: {
             title: "Satanic Rituals",
             base: 1000000,
-            exp: 1.3,
+            exp: 1.45,
             ord: 7,
             eval: this.getSatanicRitual.bind(this),
             unit: "Blood/s",
@@ -138,7 +138,7 @@ function Game(canvasID) {
         rainingBlood: {
             title: "Raining blood",
             base: 1000000000,
-            exp: 1.4,
+            exp: 1.65,
             ord: 8,
             eval: this.getRainingBlood.bind(this),
             unit: "Blood/s",
