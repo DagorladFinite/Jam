@@ -253,15 +253,6 @@ function Game(canvasID) {
     ];
     this.achievements = [
         {
-            title: "First of many",
-            cond: "Kill your first innocent",
-            comment: "Good start!",
-            eval: function () {
-                return this.data.kills>0;
-            }.bind(this),
-            bonus: 1.1,
-        },
-        {
             title: "Open wound",
             cond: "Kill 10 innocents",
             comment: "You’re getting the hang of this!",
@@ -396,6 +387,33 @@ function Game(canvasID) {
             }.bind(this),
             bonus: 2,
         },
+        {
+            title: "Badder",
+            cond: "Buy an upgrade",
+            comment: "Your power grows",
+            eval: function () {
+                return this.dcheck(1,1);
+            }.bind(this),
+            bonus: 1.5,
+        },
+        {
+            title: "Baddest",
+            cond: "Buy 10 of each upgrade",
+            comment: "Your power grows even more",
+            eval: function () {
+                return this.dcheck(10,9);
+            }.bind(this),
+            bonus: 3,
+        },
+        {
+            title: "Baddestest",
+            cond: "Buy 100 of each upgrade",
+            comment: "Unmatched power",
+            eval: function () {
+                return this.dcheck(100,9);
+            }.bind(this),
+            bonus: 10,
+        },
     ];
     this.page = 0;
     this.abl = {
@@ -432,6 +450,16 @@ function Game(canvasID) {
     }
     this.currentaudio=null;
     this.mute=false;
+}
+
+Game.prototype.dcheck = function (val, amount) {
+    var got = 0;
+    for (var key in this.data.updates) {
+        if (this.data.updates.hasOwnProperty(key)) {
+            if (this.data.updates[key]>=val) ++got;
+        }
+    }
+    return got>=amount;
 }
 
 Game.prototype.play = function (key) {
