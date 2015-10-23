@@ -74,7 +74,7 @@ function Game(canvasID) {
         maxHumans: {
             title: "Superpopulation",
             base: 10,
-            exp: 1.4,
+            exp: 1.42,
             ord: 0,
             eval: this.getMaxHumans.bind(this),
             unit: "Humans",
@@ -82,7 +82,7 @@ function Game(canvasID) {
         humanSpawnTime: {
             title: "Doctors",
             base: 20,
-            exp: 1.25,
+            exp: 1.42,
             ord: 1,
             eval: this.getHumanSpawnTime.bind(this),
             unit: "ms",
@@ -98,7 +98,7 @@ function Game(canvasID) {
         particlesPerHuman: {
             title: "Polycythemia",
             base: 100,
-            exp: 1.315,
+            exp: 1.5,
             ord: 3,
             eval: this.getParticlesPerHuman.bind(this),
             unit: "Droplets",
@@ -106,7 +106,7 @@ function Game(canvasID) {
         bloodPerParticle: {
             title: "Leukocytosis",
             base: 1000,
-            exp: 1.425,
+            exp: 1.315,
             ord: 4,
             eval: this.getBloodPerParticle.bind(this),
             unit: "Blood",
