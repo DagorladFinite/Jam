@@ -155,6 +155,7 @@ function Game(canvasID) {
         "Elephants",
         "Whales",
         "Your Mom",
+        "KK’s asses",
     ];
     this.version = "0.0.0.1";
     this.menu = [
@@ -254,124 +255,124 @@ function Game(canvasID) {
         {
             title: "First of many",
             cond: "Kill your first innocent",
-            comment: "rando",
+            comment: "Good start!",
             eval: function () {
                 return this.data.kills>0;
             }.bind(this),
-            bonus: 2,
+            bonus: 1.1,
         },
         {
             title: "Open wound",
             cond: "Kill 10 innocents",
-            comment: "rando",
+            comment: "You’re getting the hang of this!",
             eval: function () {
                 return this.data.kills>=10;
             }.bind(this),
-            bonus: 2,
+            bonus: 1.5,
         },
         {
             title: "Mass murder",
             cond: "Kill 100 innocents",
-            comment: "rando",
+            comment: "You’re getting good at this!",
             eval: function () {
                 return this.data.kills>=100;
             }.bind(this),
             bonus: 2,
         },
         {
-            title: "Bloodbath",
+            title: "You might be the best at this!",
             cond: "Kill 1000 innocents",
-            comment: "rando",
+            comment: "You might be the best at this!",
             eval: function () {
                 return this.data.kills>=1000;
             }.bind(this),
-            bonus: 2,
+            bonus: 5,
         },
         {
             title: "The rivers will run red",
             cond: "Kill 10000 innocents",
-            comment: "rando",
+            comment: "It’s scary how good you are at this",
             eval: function () {
                 return this.data.kills>=10000;
             }.bind(this),
-            bonus: 2,
+            bonus: 10,
         },
         {
             title: "Genocide",
             cond: "Kill 100000 innocents",
-            comment: "rando",
+            comment: "Wow, dude, really?",
             eval: function () {
                 return this.data.kills>=100000;
             }.bind(this),
-            bonus: 2,
+            bonus: 25,
         },
         {
             title: "Red planet",
             cond: "Kill 1000000 innocents",
-            comment: "rando",
+            comment: "Just stop.",
             eval: function () {
                 return this.data.kills>=1000000;
             }.bind(this),
-            bonus: 2,
+            bonus: 100,
         },
         {
             title: "Friendly fire",
-            cond: "Kill 10 metalheads",
-            comment: "rando",
+            cond: "Kill 100 metalheads",
+            comment: "They hail Satan, they can’t be that bad, right?",
             eval: function () {
-                return this.data.kill[1]>=10;
+                return this.data.kill[1]>=100;
             }.bind(this),
             bonus: 2,
         },
         {
             title: "England’s finest",
-            cond: "Kill 10 chavs",
-            comment: "rando",
+            cond: "Kill 100 chavs",
+            comment: "I GON BASH UR HEAD IN I SWER ON ME MUM M8",
             eval: function () {
-                return this.data.kill[3]>=10;
+                return this.data.kill[3]>=100;
             }.bind(this),
             bonus: 2,
         },
         {
             title: "Deal with the devil",
-            cond: "Kill 10 bussinessmen",
-            comment: "rando",
+            cond: "Kill 100 bussinessmen",
+            comment: "What a deal!",
             eval: function () {
-                return this.data.kill[2]>=10;
+                return this.data.kill[2]>=100;
             }.bind(this),
             bonus: 2,
         },
         {
             title: "Hip to be squashed",
-            cond: "Kill 10 hipsters",
-            comment: "rando",
+            cond: "Kill 100 hipsters",
+            comment: "They were dead before it was cool",
             eval: function () {
-                return this.data.kill[0]>=10;
+                return this.data.kill[0]>=100;
             }.bind(this),
             bonus: 2,
         },
         {
             title: "Heaven",
             cond: "Send your first soul to heaven",
-            comment: "rando",
+            comment: "He was a good boy",
             eval: function () {
                 return this.data.judge[0]>0;
             }.bind(this),
-            bonus: 2,
+            bonus: 1.5,
         },
         {
             title: "Hell",
             cond: "Send your first soul to hell",
-            comment: "rando",
+            comment: "Where do bad folks go when they die?",
             eval: function () {
                 return this.data.judge[1]>0;
             }.bind(this),
-            bonus: 2,
+            bonus: 1.5,
         },
         {
             title: "Judge…",
             cond: "Judge correctly 10 people",
-            comment: "rando",
+            comment: "A job well done",
             eval: function () {
                 return this.data.judge[0]+this.data.judge[1]>=10;
             }.bind(this),
@@ -380,16 +381,16 @@ function Game(canvasID) {
         {
             title: "Jury…",
             cond: "Judge correctly 100 people",
-            comment: "rando",
+            comment: "A job done better",
             eval: function () {
                 return this.data.judge[0]+this.data.judge[1]>=100;
             }.bind(this),
-            bonus: 2,
+            bonus: 3,
         },
         {
             title: "And executor",
             cond: "Judge incorrectly 10 people",
-            comment: "rando",
+            comment: "We all make mistakes!",
             eval: function () {
                 return this.data.judge[2]>=10;
             }.bind(this),
@@ -924,6 +925,7 @@ Game.prototype.drawOverlay = function () {
                 if (p<this.achievements.length) {
                     if (this.achievements[p].eval()) {
                         this.ctx.fillStyle="red";
+                        this.ctx.fillText(this.achievements[p].comment,this.width/2,241+120*i);
                     } else {
                         this.ctx.fillStyle="white";
                     }
@@ -932,8 +934,6 @@ Game.prototype.drawOverlay = function () {
                     this.ctx.textBaseLine = "bottom";
                     this.ctx.fillText(this.achievements[p].title,this.width/2,175+120*i);
                     this.ctx.fillText(this.achievements[p].cond,this.width/2,208+120*i);
-                    this.ctx.fillText(this.achievements[p].comment,this.width/2,241+120*i);
-                    
                     this.ctx.fillText("x"+this.achievements[p].bonus.toString(),this.width-100,208+120*i);
                 }
             }
