@@ -467,7 +467,7 @@ Game.prototype.getBloodPerParticle = function (extra) {
 }
 Game.prototype.getCritical = function (extra) {
     if (typeof extra == "undefined") extra = 0;
-    return (this.data.updates.critical+extra)/100+(this.data.updates.critical+extra);
+    return ((this.data.updates.critical+extra)/(100+(this.data.updates.critical+extra)))*100;
 }
 Game.prototype.getAutokill = function (extra) {
     if (typeof extra == "undefined") extra = 0;
@@ -1028,8 +1028,10 @@ Game.prototype.updateHumans = function (now) {
     }
     for (var i=this.humans.length-1; i>=0; --i) {
         this.humans[i].x += this.humans[i].dir * this.humans[i].speed;
-        if ((this.humans[i].dir==-1 && this.humans[i].x<-0.2) || (this.humans[i].dir==1 && this.humans[i].x>1.2)) {
-            this.humans.splice(i,1);
+        if (this.humans[i].dir==-1 && this.humans[i].x<-0.2) {
+            this.humans[i].x = 1.2;
+        } else if (this.humans[i].dir==1 && this.humans[i].x>1.2) {
+            this.humans[i].x = -0.2;
         }
     }
 }
