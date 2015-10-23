@@ -678,10 +678,10 @@ Game.prototype.release = function (x,y,id) {
                 }
                 if (inside(x,y,this.abl.x,this.abl.y,this.abl.w,this.abl.h)) {
                     --this.page;
-                    if (this.page<0) this.page=Math.floor(this.achievements.length/3);
+                    if (this.page<0) this.page=Math.floor((this.achievements.length)/3)-1;
                 } else if (inside(x,y,this.abr.x,this.abr.y,this.abr.w,this.abr.h)) {
                     ++this.page;
-                    if (this.page>this.achievements.length/3) this.page=0;
+                    if (this.page>Math.floor((this.achievements.length)/3)-1) this.page=0;
                 }
             } else if (this.overlay=="credits") {
                 if (!inside(x,y,50,100,this.width-100,this.height-140)) {
