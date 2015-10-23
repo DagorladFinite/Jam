@@ -408,6 +408,7 @@ function Game(canvasID) {
         "audiogame": true,
         "audiojudge": true,
         "audioshop": true,
+        "audiocredits": true,
         "soundachievement": false,
         "soundcritical": false,
         "soundgrunt1": false,
@@ -429,13 +430,15 @@ function Game(canvasID) {
 Game.prototype.play = function (key) {
     if (this.audio.hasOwnProperty(key)) {
         if (this.audio[key]) {
-            if (this.currentaudio!=null) {
-                document.getElementById(this.currentaudio).pause();
+            if (this.currentaudio!=key) {
+                if (this.currentaudio!=null) {
+                    document.getElementById(this.currentaudio).pause();
+                }
+                this.currentaudio = key;
+                document.getElementById(key).play();
             }
-            this.currentaudio = key;
-            document.getElementById(key).play();
         } else {
-            document.getElementById(key).pause();
+            document.getElementById(key).play();
         }
     }
 }
@@ -481,9 +484,11 @@ Game.prototype.getRainingBlood = function (extra) {
 Game.prototype.moveTo = function (target) {
     if (target == "upgrade") {
         this.overlay = target;
+        this.play("audioshop");
     } else if (target == "town") {
         this.overlay = "none";
         this.scene = target;
+        this.play("audiogame");
     } else if (target == "minigame") {
         this.overlay = "none";
         if (this.scene!=target) {
@@ -491,8 +496,10 @@ Game.prototype.moveTo = function (target) {
             this.current = 0;
             this.hqueue = [];
         }
+        this.play("audiojudge");
     } else if (target=="achievements") {
         this.overlay = target;
+        this.play("audioshop");
     }
 }
 
@@ -528,6 +535,7 @@ Game.prototype.init = function () {
         }
     }
     window.requestAnimationFrame(this.update.bind(this));
+    this.play("audiocredits");
 }
 
 Game.prototype.keydown = function (e) {
@@ -588,6 +596,7 @@ Game.prototype.key = function (key) {
 }
 Game.prototype.press = function (x,y,id) {
     console.log("M begin",x,y,id);
+    this.play("soundclick");
 }
 Game.prototype.move = function (x,y,id) {
     //console.log("M move",x,y,id);
@@ -596,6 +605,7 @@ Game.prototype.release = function (x,y,id) {
     console.log("M end",x,y,id);
     if (this.scene=="loading" && this.loaded==1) {
         this.scene = "town";
+        this.play("audiogame");
     } else {
         for (var i=0; i<this.menu.length; ++i) {
             if (inside(x,y,this.menu[i].x,this.menu[i].y,this.menu[i].w,this.menu[i].h)) {
@@ -608,6 +618,7 @@ Game.prototype.release = function (x,y,id) {
                 // close overlay
                 if (!inside(x,y,50,100,this.width-100,this.height-140)) {
                     this.overlay="none";
+                    this.play("audiogame");
                     return;
                 }
                 if (this.overlay=="upgrade") {
@@ -639,6 +650,7 @@ Game.prototype.release = function (x,y,id) {
                     var cx = (this.humans[i].x * this.width)-w/2;
                     var cy = (this.humans[i].y * this.height)-h;
                     if (inside(x,y,cx,cy,w,h)) {
+                        this.play("soundsquish"+randomInt(1,4).toString());
                         this.kill(this.humans.splice(i,1)[0]);
                         return;
                     }
@@ -649,6 +661,7 @@ Game.prototype.release = function (x,y,id) {
                 // close overlay
                 if (!inside(x,y,50,100,this.width-100,this.height-140)) {
                     this.overlay="none";
+                    this.play("audiogame");
                     return;
                 }
                 if (this.overlay=="upgrade") {
@@ -1031,7 +1044,11 @@ Game.prototype.kill = function (dead) {
     ++this.data.kill[dead.type];
     this.data.kills+=1;
     this.data.bodies+=1;
-    if (Math.random()<this.getCritical()/100) crit=this.data.record+1;
+    this.play("soundgrunt"+randomInt(1,7).toString());
+    if (Math.random()<this.getCritical()/100) {
+        crit=this.data.record+1;
+        this.play("soundcritical");
+    }
     for (var i=0; i<this.getParticlesPerHuman()+crit; ++i) {
         var part = {
             x: x,
@@ -1069,6 +1086,8 @@ Game.prototype.fix = function (val) {
 }
 
 Game.prototype.judge = function (val) {
+    if (val) this.play("soundheaven");
+    else this.play("soundhell");
     if (this.hqueue.length!=0 && this.hqueue[0].y<450) {
         var target = phrases[this.hqueue[0].text+1];
         if (val==true) {
